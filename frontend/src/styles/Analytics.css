@@ -1,0 +1,119 @@
+.analytics-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 1.5rem;
+  padding-top: 3%;
+  padding-bottom: 4%;
+  box-sizing: border-box;
+}
+.panel {
+  background-color: #191a20;
+  color: #ffffff;
+  border-radius: 12px;
+  border: 1px solid transparent;
+  transition: transform 0.3s ease, box-shadow 0.35s ease, border 0.25s ease;
+  font-family: "Segoe UI", sans-serif;
+  width: 100%;
+  padding: 20px;
+  max-width: 85%;
+}
+.panel:hover {
+  transform: scale(1.02);
+  box-shadow: 0 10px 30px rgba(255, 255, 255, 0.2); /* subtle white glow */
+  border-color: #14b8a6;
+}
+
+/* Panel title */
+.panel h2 {
+  margin: 0 0 1rem;
+  font-size: 1.25rem;
+  text-align: center;
+  transition: transform 0.3s ease, text-shadow 0.3s ease;
+}
+.panel:hover h2 {
+  transform: scale(1.05);
+  text-shadow: 0 4px 12px rgba(215, 222, 221, 0.6);
+}
+
+/* Chart wrapper */
+.chart-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+/* Tooltip styling */
+.recharts-tooltip-wrapper .recharts-default-tooltip {
+  background-color: #191a20 !important; /* dark background */
+  color: #ffffff !important;            /* white text */
+  border: 1px solid #14b8a6;
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 0.875rem;
+}
+
+/* Ensure all nested spans and divs inside tooltip are white */
+.recharts-tooltip-wrapper .recharts-default-tooltip * {
+  color: #ffffff !important;
+}
+
+/* Grid lines & axes */
+.recharts-cartesian-grid .recharts-cartesian-grid-line {
+  stroke: rgba(255, 255, 255, 0.1);
+}
+.recharts-x-axis text,
+.recharts-y-axis text {
+  fill: #fff;
+  font-size: 0.875rem;
+}
+
+/* Legend */
+.recharts-legend-wrapper {
+  max-height: 180px;
+  overflow-y: auto;
+  padding-right: 0.5rem;
+}
+.recharts-legend-item text {
+  fill: #fff !important;
+  font-size: 0.875rem;
+}
+
+/* Monospace unsolved list */
+.unsolved-list {
+  font-family: "Courier New", Courier, monospace;
+  font-size: 0.875rem;
+  line-height: 1.4;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: center;
+}
+.unsolved-list span {
+  padding: 0.25rem 0.75rem;
+  border: 1px solid #ffffff;
+  border-radius: 10px;
+  transition: transform 0.25s ease, box-shadow 0.3s ease, background 0.2s, color 0.2s;
+}
+.unsolved-list span:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 20px rgba(255, 255, 255, 0.25); /* subtle white shadow */
+  background-color: #ffffff;
+  color: #191a20;
+  cursor: pointer;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .panel {
+    width: 95%;
+    padding: 1rem;
+  }
+  .unsolved-list span {
+    padding: 0.2rem 0.6rem;
+    font-size: 0.8rem;
+  }
+}

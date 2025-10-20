@@ -1,0 +1,219 @@
+ol {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* container */
+.problem-set {
+  background-color: #191a20;
+  padding: 1.5rem;
+  border-radius: 8px;
+  color: #ffffff;
+  width: 100%;
+  min-width: 420px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  font-family: "Segoe UI", sans-serif;
+  gap: 1rem;
+  box-sizing: border-box;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border 0.25s ease;
+}
+
+/* title */
+.problem-set h2 {
+  margin: 0 0 1rem 0;
+  font-size: 1.25rem;
+  display: flex;
+  justify-content: center;
+  transition: transform 0.3s ease, text-shadow 0.3s ease, color 0.3s ease;
+}
+
+/* container hover */
+.problem-set:hover {
+  transform: scale(1.02);
+  box-shadow: 0 12px 40px rgba(20, 184, 166, 0.14); /* soft teal halo */
+  border: 2px solid #14b8a6;
+}
+.problem-set:hover h2 {
+  transform: scale(1.05);
+  text-shadow: 0 4px 12px rgba(215, 222, 221, 0.6);
+  color: #e6fff8;
+}
+
+/* list wrapper */
+.problem-list {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  overflow: visible;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+/* keep ol inside problem-list clean */
+.problem-list ol {
+  width: 100%;
+  padding: 0;
+  margin: 0;
+}
+
+/* list items */
+.problem-list li {
+  position: relative; /* MODIFICATION: Added for tooltip positioning */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 48px;
+  width: 100%;
+  min-width: 300px;
+  padding: 0 1.25rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+  font-size: 1rem;
+  background: transparent;
+  color: #fff;
+  box-sizing: border-box;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+  transition:
+    transform 0.35s cubic-bezier(.2,.9,.3,1),
+    box-shadow 0.35s cubic-bezier(.2,.9,.3,1),
+    background 0.25s ease,
+    color 0.25s ease,
+    border-color 0.25s ease;
+  cursor: default;
+}
+
+/* hover: subtle scale + evenly spread teal glow */
+.problem-list li:hover,
+.problem-list li:focus-within {
+  transform: translateY(-4px) scale(1.03);
+  box-shadow:
+    0 6px 20px rgba(0, 0, 0, 0.38),
+    0 0 30px rgba(20, 184, 166, 0.14);
+  background-color: #ffffff;
+  color: #1f2128;
+  border-color: rgba(20, 184, 166, 0.35);
+  cursor: pointer;
+}
+
+/* keyboard accessibility: visible focus */
+.problem-list li:focus,
+.problem-list li:focus-within,
+.problem-list li:focus-visible {
+  outline: 3px solid rgba(20, 184, 166, 0.15);
+  outline-offset: 4px;
+}
+
+/* links inside list items */
+.problem-list li a {
+  text-decoration: none;
+  color: inherit;
+  width: 100%;
+  display: block;
+}
+
+/* solved state */
+.problem-list li.solved {
+  background-color: #d4edda;
+  color: #155724;
+  font-weight: 600;
+  border-color: rgba(37, 135, 86, 0.6);
+  box-shadow: 0 6px 18px rgba(17, 94, 46, 0.12);
+}
+
+/* ---------------------------------- */
+/* -- NEW TOOLTIP STYLES START HERE -- */
+/* ---------------------------------- */
+
+.info-btn {
+  /* Basic styling for the button */
+  background: #3a3f4b;
+  color: #e2e8f0;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 600;
+  transition: background-color 0.2s ease, color 0.2s ease;
+  flex-shrink: 0; /* Prevents button from shrinking */
+  margin-left: 1rem; /* Space between link and button */
+}
+
+.info-btn:hover {
+  background-color: #14b8a6; /* Teal color on hover */
+  color: #ffffff;
+}
+
+.info-box {
+  position: absolute;
+  right: 1rem; /* Align near the info button */
+  bottom: calc(100% + 10px); /* Position above the list item with a 10px gap */
+  z-index: 10;
+  width: max-content;
+  min-width: 220px;
+  max-width: 300px;
+  background-color: #2d3748; /* Darker, distinct background */
+  color: #e2e8f0;
+  border: 1px solid #4a5568;
+  border-radius: 8px;
+  padding: 1rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  text-align: left;
+}
+
+/* Optional: Adds a small triangle pointer to the tooltip */
+.info-box::after {
+  content: '';
+  position: absolute;
+  top: 100%; /* Position at the bottom of the tooltip */
+  right: 20px; /* Align with the info button */
+  border-width: 8px;
+  border-style: solid;
+  border-color: #2d3748 transparent transparent transparent;
+}
+
+.info-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.info-row strong {
+  color: #a0aec0;
+  flex-shrink: 0;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.tag {
+  background-color: #4a5568;
+  color: #cbd5e0;
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+
+/* small screens */
+@media (max-width: 520px) {
+  .problem-set {
+    padding: 1rem;
+    min-width: 320px;
+  }
+  .problem-list li {
+    height: 44px;
+    padding: 0 0.75rem;
+  }
+}

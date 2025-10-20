@@ -1,0 +1,115 @@
+.heatmap-wrapper {
+  background-color: #191a20;
+  padding: 1rem 1.5rem;
+  border-radius: 10px;
+  color: #fff;
+  width: 100%;
+  max-width: 100%;
+  height: 60%;
+  min-height: 180px;
+  font-family: "Segoe UI", sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow-x: hidden;       
+  overflow-y: auto;         
+  box-sizing: border-box;
+  border: 2px solid transparent;
+  transform-origin: center;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+.heatmap-wrapper:hover {
+  transform: scale(1.02);
+  box-shadow: 0 12px 40px rgba(20, 184, 166, 0.16);
+  border-color: #14b8a6;
+}
+
+/* Title / Heading */
+.heatmap-wrapper h2,
+.title {
+  margin: 0 0 1rem 0;
+  font-size: 1.25rem;
+  text-align: center;
+  color: #e6edf3;
+  transition: transform 0.3s ease, text-shadow 0.3s ease, color 0.3s ease;
+}
+
+.heatmap-wrapper:hover h2,
+.heatmap-wrapper:hover .title {
+  transform: scale(1.05);
+  text-shadow: 0 4px 15px rgba(215, 222, 221, 0.6);
+}
+
+.react-calendar-heatmap {
+  width: 100%;            
+  max-width: 100%;
+  height: 150px;
+  margin: 10px 0 0 0;     
+  box-sizing: border-box;
+}
+
+/* ensure the inner SVG scales correctly */
+.react-calendar-heatmap > svg {
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* Labels */
+.react-calendar-heatmap text {
+  fill: #8b949e;
+  font-size: 10px;
+}
+
+/* Heatmap Cells */
+.react-calendar-heatmap rect {
+  width: 11px;
+  height: 11px;
+  rx: 3px;
+  transition: fill 0.25s ease, transform 0.18s ease, stroke 0.18s ease;
+  cursor: pointer;
+}
+
+.react-calendar-heatmap rect:hover,
+.react-calendar-heatmap rect:focus,
+.react-calendar-heatmap rect:focus-visible {
+  transform: translateY(-2px) scale(1.06);
+  stroke: #14b8a6;
+  stroke-width: 1.5px;
+  outline: none;
+}
+
+.react-calendar-heatmap rect:focus-visible {
+  filter: drop-shadow(0 6px 18px rgba(20, 184, 166, 0.12));
+}
+
+.color-empty { fill: #2d333b; }
+.color-scale-1 { fill: #0e4429; }
+.color-scale-2 { fill: #006d32; }
+.color-scale-3 { fill: #26a641; }
+.color-scale-4 { fill: #39d353; }
+.react-tooltip {
+  pointer-events: auto;
+}
+
+.login-tab.active {
+  color: #14b8a6;
+  border-bottom: 2px solid #14b8a6;
+}
+
+@media (max-width: 520px) {
+  .react-calendar-heatmap {
+    height: 120px;
+  }
+  .react-calendar-heatmap rect {
+    width: 9px;
+    height: 9px;
+  }
+  .heatmap-wrapper {
+    padding: 0.75rem 1rem;
+    height: auto;
+  }
+}

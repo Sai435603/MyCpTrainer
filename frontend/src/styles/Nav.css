@@ -1,0 +1,165 @@
+.navbar {
+  display: flex;
+  flex-wrap: wrap;          
+  align-items: center;
+  padding: 1rem 2rem;
+  width: 100%;
+  background-color: #0d1117;
+  box-shadow: 0 5px 100px rgba(252, 252, 250, 0.05); 
+  position: fixed;
+  top: 0;
+  z-index: 100;
+  font-family: 'sans-serif';
+  box-sizing: border-box;
+}
+
+.navbarlogo {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #ffffff;
+}
+
+/* Navbar links */
+.navbarlinks {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  margin-left: 2rem;
+}
+
+.navbarlinks li {
+  text-decoration: none;
+  font-size: 1rem;
+  color: #cfd8dc;
+  position: relative;
+  font-family: 'sans-serif';
+  transition: color 0.2s ease-in-out, text-shadow 0.2s ease-in-out;
+}
+
+/* Remove underline from <Link> (anchor tags) */
+.navbarlinks li a {
+  text-decoration: none;
+  color: inherit; /* inherit color from li */
+  transition: color 0.2s ease-in-out, text-shadow 0.2s ease-in-out;
+}
+
+.navbarlinks li a:hover {
+  color: #ffffff;
+  text-shadow: 
+    0 3px 30px #ffffff, 
+    0 5px 20px #ffffff;
+  cursor: pointer;
+}
+
+.navbarlinks li:hover {
+  color: #ffffff;
+  text-shadow: 
+    0 3px 30px #ffffff, 
+    0 5px 20px #ffffff;
+  cursor: pointer;
+}
+
+
+/* Streak info */
+.navbarstreak {
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+  margin-right: 1.5rem;
+  gap: 0.5rem;
+  color: #cfd8dc;
+}
+
+.streak-icon {
+  font-size: 1.2rem;
+}
+
+.streak-count {
+  font-size: 1rem;
+}
+
+/* Login button */
+.navbarlogin {
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  color: #ffffff;
+  background-color: transparent;
+  border: 2px solid #ffffff;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-right: 20px;
+  transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+}
+
+.navbarlogin:hover {
+  background-color: #ffffff;
+  color: #1f2128;
+}
+
+.profile-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+/* Circle button */
+.profile-icon-btn {
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 50%;
+  background-color: #f0f0f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: default;
+  padding: 0;
+  transition: background-color 0.2s ease;
+}
+
+.profile-icon-btn:hover {
+  background-color: #e0e0e0;
+  cursor: pointer;
+}
+
+/* Tooltip */
+.profile-tooltip {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  transform: translateY(6px);
+  background-color: #5f5b5b;
+  color: #fff;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 13px;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  pointer-events: none;
+}
+
+.profile-wrapper:hover .profile-tooltip {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+@media (max-width: 600px) {
+  .navbar {
+    padding: 0.75rem 1rem;
+  }
+
+  .navbarlinks {
+    margin-left: 1rem;
+    gap: 1rem;
+  }
+
+  .navbarlogin {
+    margin-right: 10px;
+    padding: 0.4rem 0.8rem;
+    font-size: 0.9rem;
+  }
+}

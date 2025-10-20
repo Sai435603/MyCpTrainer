@@ -1,0 +1,195 @@
+.login-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 2rem;
+  min-height: 100vh;
+  background-color: #0f1115;
+  font-family: sans-serif;
+  box-sizing: border-box;
+}
+
+.login-logo {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #ffffff;
+  margin-bottom: 2rem;
+}
+
+.login-card {
+  background-color: #1f2025;
+  border-radius: 1rem;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+  width: 100%;
+  max-width: 400px;
+  padding: 2rem;
+  box-sizing: border-box;
+}
+
+.login-tabs {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 2rem;
+}
+
+.login-tab {
+  font-size: 1.125rem;
+  font-weight: 500;
+  color: #999999;
+  padding-bottom: 0.25rem;
+  margin: 0 1rem;
+  cursor: pointer;
+  transition: color 0.2s, border-bottom-color 0.2s;
+  border-bottom: 2px solid transparent;
+}
+
+.login-tab.active {
+  color: #14b8a6;
+  border-bottom-color: #14b8a6;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  font-size: 0.875rem;
+  color: #cccccc;
+  margin-bottom: 0.5rem;
+}
+
+.form-group input {
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  color: #f5f5f5;
+  background-color: #2a2c33;
+  border: 1px solid #3a3c44;
+  border-radius: 0.5rem;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-group input::placeholder {
+  color: #666666;
+}
+
+.form-group input:focus {
+  border-color: #14b8a6;
+  box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.3);
+}
+
+.login-button {
+  padding: 0.75rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #ffffff;
+  background-color: #14b8a6;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.login-button:hover:not(:disabled) {
+  background-color: #0f766e;
+}
+
+.login-button:disabled {
+    background-color: #0f766e;
+    cursor: wait;
+}
+
+.message-area {
+  margin-top: 1.5rem;
+  text-align: center;
+  min-height: 24px;
+  width: 100%;
+}
+
+.error-text {
+  color: #f87171;
+}
+
+.success-text {
+  color: #4ade80;
+}
+
+.reset-indicator {
+  font-size: 0.875rem;
+  color: #f59e0b; /* amber color */
+  text-align: center;
+  margin-top: -1rem;
+  margin-bottom: 1.5rem;
+}
+
+.extra-link {
+  text-align: right;
+  margin-top: -1rem;
+  margin-bottom: 1.5rem;
+}
+
+.link-text {
+  font-size: 0.875rem;
+  color: #999999;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.link-text:hover {
+  color: #14b8a6;
+}
+
+.challenge-text {
+  display: block;
+  margin-top: 20px;
+  color: #ffffff;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.progress-wrap {
+  margin-top: 1.5rem;
+  width: 100%;
+}
+
+.progress-info {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.875rem;
+  color: #cfcfcf;
+  margin-bottom: 0.5rem;
+}
+
+.progress-container {
+  background: #2a2c33;
+  border-radius: 999px;
+  height: 10px;
+  width: 100%;
+  overflow: hidden;
+  border: 1px solid #3a3c44;
+}
+
+.progress-bar {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #14b8a6, #06b6d4);
+  transition: width 1s linear;
+}
+
+a {
+  color: white;
+  word-break: break-all;
+}
+
+strong {
+  color: white;
+}
