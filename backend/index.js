@@ -12,7 +12,7 @@ import logOutHandler from "./controllers/logOutHandler.js";
 import fetchAnalytics from "./controllers/fetchAnalytics.js";
 import verifySession from "./controllers/verifySession.js";
 import syncProfile from "./controllers/syncProfile.js";
-import fetchStreak from "./controllers/fetchStreak.js";
+import fetchStreak from "./controllers/fetchstreak.js";
 import getAllBlogs from "./controllers/getAllBlogs.js";
 import createBlog from "./controllers/createBlog.js";
 import getBlogById from "./controllers/getBlogById.js";
@@ -29,7 +29,7 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 app.use(json());
-app.use(cors({ origin: FRONTEND_URL, credentials: true }));
+app.use(cors({ origin: FRONTEND_URL }));
 app.use(cookieParser());
 
 try {

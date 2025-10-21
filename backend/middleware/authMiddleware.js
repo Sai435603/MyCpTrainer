@@ -1,20 +1,25 @@
 import jwt from 'jsonwebtoken';
 
-export default function(req, res, next) {
-  // 1. Get token from the cookie
-  const token = req.cookies.token;
+const authMiddleware = (req, res, next) => {
+  // 1. Get token from the Authorization header
+  const authHeader = req.headers.authorization;
 
-  // 2. Check if not token
-  if (!token) {
-    return res.status(401).json({ message: 'No token, authorization denied' });
+  // 2. Check if the header exists and is formatted as "Bearer <token>"
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return res.status(401).json({ message: "No token, authorization denied." });
   }
 
-  // 3. Verify token
   try {
+    // 3. Extract the token from the header
+    const token = authHeader.split(' ')[1];
+
+    // 4. Verify the token
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     req.user = decoded.user;
     next();
-  } catch (err) {
-    res.status(401).json({ message: 'Token is not valid' });
+  } catch (error) {
+    res.status(401).json({ message: "Token is not valid." });
   }
 };
+
+export default authMiddleware;

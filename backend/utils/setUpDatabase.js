@@ -1,6 +1,6 @@
 import  Mongoose  from "mongoose";
 async function setUpDatabase() {
-  const DB_URL = process.env.MONGODB_URI || "mongodb://localhost:27017/mycptrainer";
+  const DB_URL = process.env.DB_URL;
   await Mongoose.connect(DB_URL)
     .then(async () => {
       console.log("Database Connected");
