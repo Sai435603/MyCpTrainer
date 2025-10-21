@@ -14,7 +14,7 @@ import {
   Cell,
 } from "recharts";
 import "../styles/Analytics.css";
-
+import { BASE_URL } from "../constants.js";
 // Unique bar colors by rating‐bucket (800 → 3500)
 const BAR_COLORS = [
   "#B0B0B0", // 800
@@ -68,10 +68,11 @@ export default function Analytics() {
   const [unsolvedList, setUnsolvedList] = useState([]);
   const { userr } = useContext(MainAppContext);
   const handle = userr;
+
   useEffect(() => {
     async function fetchData() {
       const resp = await fetch(
-        `http://localhost:3000/api/analytics/${handle}`,
+        `${BASE_URL}/api/analytics/${handle}`,
         {
           method: "GET",
           headers: { "Content-Type": "application/json" },

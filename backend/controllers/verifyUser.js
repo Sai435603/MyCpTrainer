@@ -3,7 +3,7 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
 async function verifyUser(req, res) {
-  // ... (input validation remains the same)
+  
   const { handle, password } = req.body || {};
 
   try {
@@ -30,7 +30,7 @@ async function verifyUser(req, res) {
       maxAge: 24 * 60 * 60 * 1000 
     });
 
-    // Send a success response without the token in the body
+    
     return res.status(200).json({
       message: "Login successful.",
       handle: user.handle,

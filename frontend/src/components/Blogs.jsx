@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect } from "react";
 import "../styles/Blogs.css";
-
+import {BASE_URL} from "../constants.js";
 const formatRelativeTime = (dateString) => {
   if (!dateString) return "unknown";
   const date = new Date(dateString);
@@ -80,7 +80,7 @@ export default function Blog() {
     const fetchBlogs = async () => {
       try {
         setIsLoading(true);
-        const response = await fetch("http://localhost:3000/api/blogs");
+        const response = await fetch(`${BASE_URL}/api/blogs`);
         if (!response.ok) {
           const text = await response.text();
           console.error("Non-OK response fetching blogs:", response.status, text.slice(0, 300));
@@ -136,7 +136,7 @@ export default function Blog() {
 
   const openDetail = async (item) => {
     try {
-      const response = await fetch(`http://localhost:3000/api/blogs/${item.id}`);
+      const response = await fetch(`${BASE_URL}/api/blogs/${item.id}`);
       if (!response.ok) throw new Error("Failed to fetch post details");
       const updatedPost = await response.json();
       const storedAuthor = getLocalAuthor();
@@ -172,7 +172,7 @@ export default function Blog() {
       return;
     }
     try {
-      const response = await fetch("http://localhost:3000/api/blogs", {
+      const response = await fetch(`${BASE_URL}/api/blogs`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -231,7 +231,7 @@ export default function Blog() {
       return;
     }
     try {
-      const response = await fetch(`http://localhost:3000/api/blogs/${editPost.id}`, {
+      const response = await fetch(`${BASE_URL}/api/blogs/${editPost.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -279,13 +279,13 @@ export default function Blog() {
       if (editPost && editPost.id === post.id) setEditPost(null);
 
       // Make the API call to the correct endpoint
-      const response = await fetch(`http://localhost:3000/api/blogs/${post.id}`, { method: "DELETE" });
+      const response = await fetch(`${BASE_URL}/api/blogs/${post.id}`, { method: "DELETE" });
       
       if (!response.ok) {
         // If the delete fails, alert the user and refetch the data to revert the UI
         alert("Failed to delete the post. Restoring feed.");
         console.error("Delete failed, status:", response.status);
-        const reResp = await fetch("http://localhost:3000/api/blogs");
+        const reResp = await fetch("${BASE_URL}/api/blogs");
         if (reResp.ok) {
           const data = await reResp.json();
           const storedAuthor = getLocalAuthor();
@@ -304,7 +304,7 @@ export default function Blog() {
       alert("An error occurred while deleting the post. Restoring feed.");
       console.error("Error deleting post:", err);
       // Also refetch on any other error
-      const reResp = await fetch("http://localhost:3000/api/blogs");
+      const reResp = await fetch("${BASE_URL}/api/blogs");
       if (reResp.ok) {
         const data = await reResp.json();
         const storedAuthor = getLocalAuthor();

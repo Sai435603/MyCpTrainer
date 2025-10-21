@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useNavigate } from "react-router-dom";
 import LoginContext from "../contexts/LoginContext.jsx";
 import MainAppContext from "../contexts/MainAppContext.jsx";
 import CptrainerLoader from "../loaders/CptrainerLoader.jsx";
@@ -9,11 +9,11 @@ import Contests from "./Contests.jsx";
 import Analytics from "./Analytics.jsx";
 import Blogs from "./Blogs.jsx";
 import Layout from "./Layout.jsx";
-
+import { BASE_URL } from "../constants.js";
 export default function MainApp() {
   const { user, setStreak } = useContext(LoginContext);
   const userr = user || "guest";
-
+  const navigate = useNavigate();
   const [loader, setLoader] = useState(true);
   const [word, setWord] = useState("Loading your problemset...");
   const [problemSet, setProblemSet] = useState([]);
@@ -21,23 +21,30 @@ export default function MainApp() {
   const [heatmapData, setHeatmapData] = useState(null);
   const [isSyncing, setIsSyncing] = useState(false);
 
-  // -> REFACTORED with Promise.allSettled for resilience
   async function fetchAllData(userHandle) {
     setLoader(true);
     try {
       const responses = await Promise.allSettled([
-        fetch(`http://localhost:3000/api/problems/${userHandle}`, { credentials: "include" }),
-        fetch(`http://localhost:3000/api/rating/${userHandle}`, { credentials: "include" }),
-        fetch(`http://localhost:3000/api/heatmap/${userHandle}`, { credentials: "include" }),
-        fetch(`http://localhost:3000/api/streak/${userHandle}`, { credentials: "include" }),
+        fetch(`${BASE_URL}/api/problems/${userHandle}`, {
+          credentials: "include",
+        }),
+        fetch(`${BASE_URL}/api/rating/${userHandle}`, {
+          credentials: "include",
+        }),
+        fetch(`${BASE_URL}/api/heatmap/${userHandle}`, {
+          credentials: "include",
+        }),
+        fetch(`${BASE_URL}/api/streak/${userHandle}`, {
+          credentials: "include",
+        }),
       ]);
 
-      // Helper to check and parse successful responses
+     
       const getJson = async (result) => {
-        if (result.status === 'fulfilled' && result.value.ok) {
+        if (result.status === "fulfilled" && result.value.ok) {
           return result.value.json();
         }
-        if (result.status === 'rejected') {
+        if (result.status === "rejected") {
           console.error("Fetch failed:", result.reason);
         } else if (!result.value.ok) {
           console.error("Fetch returned an error:", result.value.statusText);
@@ -59,7 +66,6 @@ export default function MainApp() {
       if (heatmapResponse?.success) {
         setHeatmapData(heatmapResponse.heatmap);
       }
-
     } catch (error) {
       console.error("A critical error occurred in fetchAllData:", error);
       setWord("Failed to load your data.");
@@ -71,17 +77,20 @@ export default function MainApp() {
   async function handleSync() {
     setIsSyncing(true);
     try {
-      const res = await fetch(`http://localhost:3000/api/sync-profile/${userr}`, {
-        method: "GET",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-      });
+      const res = await fetch(
+        `${BASE_URL}/api/sync-profile/${userr}`,
+        {
+          method: "GET",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+        }
+      );
       if (!res.ok) throw new Error("Failed to sync profile.");
       const data = await res.json();
 
       setProblemSet(data.user.dailyProblems.items);
       setStreak(data.user.streak);
-    //   console.log(data.heatmap.values);
+      //   console.log(data.heatmap.values);
       setHeatmapData(data.heatmap);
     } catch (error) {
       console.error("Error during profile sync:", error);
@@ -93,6 +102,7 @@ export default function MainApp() {
   useEffect(() => {
     if (userr !== "guest") {
       fetchAllData(userr);
+      navigate("/");
     }
   }, [userr]);
 
@@ -101,15 +111,48 @@ export default function MainApp() {
   return (
     <MainAppContext.Provider
       value={{
-        problemSet, ratingData, heatmapData, userr, handleSync, isSyncing,
+        problemSet,
+        ratingData,
+        heatmapData,
+        userr,
+        handleSync,
+        isSyncing,
       }}
     >
       <Nav />
       <Routes>
-        <Route path="/" element={<Layout><Dashboard /></Layout>} />
-        <Route path="/contests" element={<Layout><Contests /></Layout>} />
-        <Route path="/analytics" element={<Layout><Analytics /></Layout>} />
-        <Route path="/blogs" element={<Layout><Blogs /></Layout>} />
+        <Route
+          path="/"
+          element={
+            <Layout>
+              <Dashboard />
+            </Layout>
+          }
+        />
+        <Route
+          path="/contests"
+          element={
+            <Layout>
+              <Contests />
+            </Layout>
+          }
+        />
+        <Route
+          path="/analytics"
+          element={
+            <Layout>
+              <Analytics />
+            </Layout>
+          }
+        />
+        <Route
+          path="/blogs"
+          element={
+            <Layout>
+              <Blogs />
+            </Layout>
+          }
+        />
       </Routes>
     </MainAppContext.Provider>
   );

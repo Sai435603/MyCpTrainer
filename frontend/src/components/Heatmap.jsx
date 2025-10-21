@@ -7,11 +7,11 @@ import "../styles/Heatmap.css";
 import MainAppContext from "../contexts/MainAppContext.jsx";
 
 export default function Heatmap() {
-  // -> FIX: The context provides 'heatmapData', not 'heatmap'.
+ 
   const { heatmapData } = useContext(MainAppContext);
 
   const { startDate, endDate, values } = useMemo(() => {
-    // -> FIX: Use heatmapData here.
+   
     if (heatmapData?.startDate && heatmapData?.endDate && Array.isArray(heatmapData.values)) {
       return {
         startDate: new Date(heatmapData.startDate),
@@ -20,7 +20,7 @@ export default function Heatmap() {
       };
     }
 
-    // This fallback logic for an empty heatmap is correct.
+   
     const end = new Date();
     const start = new Date(end);
     start.setFullYear(start.getFullYear() - 1);
@@ -32,8 +32,7 @@ export default function Heatmap() {
       cur.setDate(cur.getDate() + 1);
     }
     return { startDate: start, endDate: end, values: days };
-  }, [heatmapData]); // -> FIX: The dependency should be heatmapData.
-
+  }, [heatmapData]); 
   return (
     <div className="heatmap-wrapper">
       <h2 className="title"><strong>Streak Map</strong></h2>

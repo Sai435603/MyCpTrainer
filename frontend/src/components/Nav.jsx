@@ -4,14 +4,14 @@ import { Link } from "react-router-dom";
 import { useContext } from "react";
 import LoginContext from "../contexts/LoginContext.jsx";
 import MainAppContext from "../contexts/MainAppContext.jsx";
-
+import { BASE_URL } from "../constants.js";
 export default function Nav() {
   const { setIsAuthenticated, streak } = useContext(LoginContext);
   const { handleSync, isSyncing } = useContext(MainAppContext);
 
   const handleLogout = async () => {
     try {
-      const response = await fetch("http://localhost:3000/api/logout", {
+      const response = await fetch(`${BASE_URL}/api/logout`, {
         method: "POST",
         credentials: "include",
       });

@@ -5,7 +5,7 @@ import LoginContext from "./contexts/LoginContext.jsx";
 import Login from "./components/Login.jsx";
 import { BrowserRouter as Router } from "react-router-dom";
 import LoadingSpinner from "./loaders/CptrainerLoader.jsx";
-
+import { BASE_URL } from "./constants.js";
 export default function App() {
   const [user, setUser] = useState("");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -15,7 +15,7 @@ export default function App() {
   useEffect(() => {
     const verifySession = async () => {
       try {
-        const res = await fetch("http://localhost:3000/api/auth/verify", {
+        const res = await fetch(`${BASE_URL}/api/auth/verify`, {
           credentials: "include",
         });
         if (res.ok) {

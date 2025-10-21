@@ -2,11 +2,6 @@ import fetch from 'node-fetch';
 import User from '../models/User.js';
 import Heatmap from '../models/Heatmap.js';
 
-// --- HELPER FUNCTIONS ---
-
-/**
- * Fetches and filters for accepted submissions for a given Codeforces handle.
- */
 async function getAcceptedSubmissions(handle) {
     const url = `https://codeforces.com/api/user.status?handle=${handle}`;
     try {
@@ -21,9 +16,6 @@ async function getAcceptedSubmissions(handle) {
     }
 }
 
-/**
- * Processes submissions to generate heatmap data.
- */
 function calculateHeatmapValues(acceptedSubmissions) {
     const submissionCounts = new Map();
     for (const sub of acceptedSubmissions) {
@@ -33,9 +25,7 @@ function calculateHeatmapValues(acceptedSubmissions) {
     return Array.from(submissionCounts.entries()).map(([date, count]) => ({ date, count }));
 }
 
-/**
- * Calculates the user's current streak.
- */
+
 function calculateStreak(acceptedSubmissions) {
     if (acceptedSubmissions.length === 0) return 0;
     const uniqueSubmissionDays = new Set();
@@ -48,7 +38,7 @@ function calculateStreak(acceptedSubmissions) {
     const todayStr = currentDate.toISOString().slice(0, 10);
     currentDate.setDate(currentDate.getDate() - 1);
     const yesterdayStr = currentDate.toISOString().slice(0, 10);
-    currentDate = new Date(); // Reset
+    currentDate = new Date(); 
     if (!uniqueSubmissionDays.has(todayStr) && !uniqueSubmissionDays.has(yesterdayStr)) {
         return 0;
     }
@@ -60,7 +50,6 @@ function calculateStreak(acceptedSubmissions) {
 }
 
 
-// --- MAIN SYNC FUNCTION ---
 async function syncProfile(req, res) {
     try {
         const { handle, id: userId } = req.user;
@@ -106,7 +95,7 @@ async function syncProfile(req, res) {
             { new: true, upsert: true }
         ).lean();
 
-        // **SECURITY FIX**: Create a safe payload with only necessary data
+       
         const userPayload = {
             _id: updatedUser._id,
             handle: updatedUser.handle,
@@ -116,7 +105,7 @@ async function syncProfile(req, res) {
 
         res.status(200).json({
             message: "Profile synced successfully",
-            user: userPayload, // Send the safe payload
+            user: userPayload, 
             heatmap: updatedHeatmap
         });
 

@@ -1,7 +1,7 @@
 import { useContext, useState, useEffect, useRef } from "react";
 import LoginContext from "../contexts/LoginContext";
 import "../styles/Login.css";
-
+import { BASE_URL } from "../constants.js";
 const DEFAULT_SECONDS = 300;
 
 async function parseResponseError(res) {
@@ -81,11 +81,11 @@ export default function Login() {
       return setError("Password must be at least 6 characters long.");
     }
     try {
-      const res = await fetch("http://localhost:3000/api/login", {
+      const res = await fetch(`${BASE_URL}/api/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ handle: username.trim(), password }),
-        credentials: 'include',
+        credentials: "include",
       });
 
       if (!res.ok) throw new Error(await parseResponseError(res));
@@ -118,7 +118,7 @@ export default function Login() {
       setLoading(true);
       try {
         const res = await fetch(
-          `http://localhost:3000/api/challenge?handle=${username.trim()}`
+          `${BASE_URL}/api/challenge?handle=${username.trim()}`
         );
         if (!res.ok) throw new Error(await parseResponseError(res));
         const data = await res.json();
@@ -142,11 +142,11 @@ export default function Login() {
           elapsedSeconds,
           isReset: isResetMode,
         };
-        const verifyRes = await fetch("http://localhost:3000/api/signup", {
+        const verifyRes = await fetch(`${BASE_URL}/api/signup`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(verifyPayload),
-          credentials: 'include',
+          credentials: "include",
         });
         if (!verifyRes.ok) throw new Error(await parseResponseError(verifyRes));
 
@@ -179,7 +179,7 @@ export default function Login() {
     return () => clearInterval(intervalRef.current);
   }, [timing, secondsLeft]);
 
-  // The rest of your JSX remains the same
+ 
   return (
     <div className="login-container">
       <h1 className="login-logo">CP TRAINER</h1>

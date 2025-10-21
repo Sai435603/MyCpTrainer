@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import "../styles/Contests.css";
+import { BASE_URL } from "../constants.js";
 const logoMap = {
   Codeforces: "/images/CodeforcesLogo.png",
   CodeChef:    "/images/CodeChefLogo.svg",
@@ -23,7 +24,7 @@ export default function Contests() {
         }
       }
       try {
-        const res = await fetch(`http://localhost:3000/api/contests`);
+        const res = await fetch(`${BASE_URL}/api/contests`);
         const data = await res.json();
         const arr = Array.isArray(data)
           ? data
