@@ -1,5 +1,5 @@
 .heatmap-wrapper {
-  background-color: #191a20;
+  background-color:#242425;
   padding: 1rem 1.5rem;
   border-radius: 10px;
   color: #fff;
@@ -26,7 +26,7 @@
   border-color: #14b8a6;
 }
 
-/* Title / Heading */
+
 .heatmap-wrapper h2,
 .title {
   margin: 0 0 1rem 0;
@@ -50,7 +50,7 @@
   box-sizing: border-box;
 }
 
-/* ensure the inner SVG scales correctly */
+
 .react-calendar-heatmap > svg {
   width: 100% !important;
   height: 100% !important;
@@ -58,13 +58,13 @@
   box-sizing: border-box;
 }
 
-/* Labels */
+
 .react-calendar-heatmap text {
   fill: #8b949e;
   font-size: 10px;
 }
 
-/* Heatmap Cells */
+
 .react-calendar-heatmap rect {
   width: 11px;
   height: 11px;

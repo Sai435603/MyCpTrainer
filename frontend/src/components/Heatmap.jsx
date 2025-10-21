@@ -7,17 +7,20 @@ import "../styles/Heatmap.css";
 import MainAppContext from "../contexts/MainAppContext.jsx";
 
 export default function Heatmap() {
-  const { heatmap } = useContext(MainAppContext);
+  // -> FIX: The context provides 'heatmapData', not 'heatmap'.
+  const { heatmapData } = useContext(MainAppContext);
 
   const { startDate, endDate, values } = useMemo(() => {
-    if (heatmap?.startDate && heatmap?.endDate && Array.isArray(heatmap.values)) {
+    // -> FIX: Use heatmapData here.
+    if (heatmapData?.startDate && heatmapData?.endDate && Array.isArray(heatmapData.values)) {
       return {
-        startDate: new Date(heatmap.startDate),
-        endDate: new Date(heatmap.endDate),
-        values: heatmap.values.map((v) => ({ date: v.date, count: v.count ?? 0 })),
+        startDate: new Date(heatmapData.startDate),
+        endDate: new Date(heatmapData.endDate),
+        values: heatmapData.values.map((v) => ({ date: v.date, count: v.count ?? 0 })),
       };
     }
 
+    // This fallback logic for an empty heatmap is correct.
     const end = new Date();
     const start = new Date(end);
     start.setFullYear(start.getFullYear() - 1);
@@ -29,7 +32,7 @@ export default function Heatmap() {
       cur.setDate(cur.getDate() + 1);
     }
     return { startDate: start, endDate: end, values: days };
-  }, [heatmap]);
+  }, [heatmapData]); // -> FIX: The dependency should be heatmapData.
 
   return (
     <div className="heatmap-wrapper">
@@ -41,10 +44,10 @@ export default function Heatmap() {
         values={values}
         classForValue={(value) => {
           if (!value || value.count === 0) return "color-empty";
-          if (value.count === 1) return "color-scale-1";
-          if (value.count === 2) return "color-scale-2";
-          if (value.count === 3) return "color-scale-3";
-          return "color-scale-4";
+          if (value.count === 1) return "color-scale-4";
+          if (value.count === 2) return "color-scale-3";
+          if (value.count === 3) return "color-scale-2";
+          return "color-scale-1";
         }}
         tooltipDataAttrs={(value) => {
           if (!value || !value.date) return null;

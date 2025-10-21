@@ -16,8 +16,8 @@ export default function Problemset() {
 
   function cfUrl(problem) {
     if (!problem) return "#";
-    const cid = problem.contestId ?? problem.contestId;
-    const idx = problem.index ?? problem.index;
+    const cid = problem.contestId;
+    const idx = problem.index;
     if (!cid || !idx) return "#";
     return `https://codeforces.com/contest/${cid}/problem/${idx}`;
   }
@@ -27,13 +27,16 @@ export default function Problemset() {
       <div className="problemset-header">
         <h2>Challenge Box</h2>
       </div>
-
       <ol className="problem-list" aria-live="polite">
         {problems.map((p, i) => {
           const key = p.problemId ?? `${p.contestId}-${p.index}-${i}`;
           const isOpen = openInfoIdx === i;
+
+          // Conditionally add the 'solved' class
+          const rowClassName = `problem-row ${p.isSolved ? "solved" : ""}`;
+
           return (
-            <li key={key} className="problem-row">
+            <li key={key} className={rowClassName}>
               <a
                 href={cfUrl(p)}
                 target="_blank"
@@ -49,16 +52,12 @@ export default function Problemset() {
                 aria-expanded={isOpen}
                 aria-controls={`info-box-${i}`}
                 onClick={() => setOpenInfoIdx(isOpen ? null : i)}
-                onKeyDown={(e) => {
-                  if (e.key === "Escape") setOpenInfoIdx(null);
-                }}
-                type="button"
               >
                 {isOpen ? "Hide" : "Topics"}
               </button>
 
               {isOpen && (
-                <div id={`info-box-${i}`} className="info-box" role="dialog" aria-label="problem info">
+                <div id={`info-box-${i}`} className="info-box">
                   <div className="info-row">
                     <strong>Rating:</strong>
                     <span>{p.rating ?? "N/A"}</span>
@@ -66,9 +65,11 @@ export default function Problemset() {
                   <div className="info-row tags-row">
                     <strong>Tags:</strong>
                     <div className="tags">
-                      {(p.tags && p.tags.length > 0) ? (
+                      {p.tags && p.tags.length > 0 ? (
                         p.tags.map((t) => (
-                          <span key={t} className="tag">{t}</span>
+                          <span key={t} className="tag">
+                            {t}
+                          </span>
                         ))
                       ) : (
                         <span className="tag">none</span>
@@ -80,7 +81,6 @@ export default function Problemset() {
             </li>
           );
         })}
-
         {problems.length === 0 && (
           <li className="empty">No problems available</li>
         )}

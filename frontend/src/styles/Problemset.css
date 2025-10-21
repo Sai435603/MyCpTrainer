@@ -4,9 +4,9 @@ ol {
   margin: 0;
 }
 
-/* container */
+
 .problem-set {
-  background-color: #191a20;
+  background-color: #2b2b2d;
   padding: 1.5rem;
   border-radius: 8px;
   color: #ffffff;
@@ -21,7 +21,7 @@ ol {
   transition: transform 0.25s ease, box-shadow 0.25s ease, border 0.25s ease;
 }
 
-/* title */
+
 .problem-set h2 {
   margin: 0 0 1rem 0;
   font-size: 1.25rem;
@@ -30,10 +30,10 @@ ol {
   transition: transform 0.3s ease, text-shadow 0.3s ease, color 0.3s ease;
 }
 
-/* container hover */
+
 .problem-set:hover {
   transform: scale(1.02);
-  box-shadow: 0 12px 40px rgba(20, 184, 166, 0.14); /* soft teal halo */
+  box-shadow: 0 12px 40px rgba(20, 184, 166, 0.14); 
   border: 2px solid #14b8a6;
 }
 .problem-set:hover h2 {
@@ -42,7 +42,7 @@ ol {
   color: #e6fff8;
 }
 
-/* list wrapper */
+
 .problem-list {
   display: flex;
   flex-direction: column;
@@ -53,16 +53,16 @@ ol {
   box-sizing: border-box;
 }
 
-/* keep ol inside problem-list clean */
+
 .problem-list ol {
   width: 100%;
   padding: 0;
   margin: 0;
 }
 
-/* list items */
+
 .problem-list li {
-  position: relative; /* MODIFICATION: Added for tooltip positioning */
+  position: relative; 
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -86,7 +86,7 @@ ol {
   cursor: default;
 }
 
-/* hover: subtle scale + evenly spread teal glow */
+
 .problem-list li:hover,
 .problem-list li:focus-within {
   transform: translateY(-4px) scale(1.03);
@@ -99,7 +99,7 @@ ol {
   cursor: pointer;
 }
 
-/* keyboard accessibility: visible focus */
+
 .problem-list li:focus,
 .problem-list li:focus-within,
 .problem-list li:focus-visible {
@@ -107,7 +107,7 @@ ol {
   outline-offset: 4px;
 }
 
-/* links inside list items */
+
 .problem-list li a {
   text-decoration: none;
   color: inherit;
@@ -115,7 +115,7 @@ ol {
   display: block;
 }
 
-/* solved state */
+
 .problem-list li.solved {
   background-color: #d4edda;
   color: #155724;
@@ -124,12 +124,9 @@ ol {
   box-shadow: 0 6px 18px rgba(17, 94, 46, 0.12);
 }
 
-/* ---------------------------------- */
-/* -- NEW TOOLTIP STYLES START HERE -- */
-/* ---------------------------------- */
 
 .info-btn {
-  /* Basic styling for the button */
+  
   background: #3a3f4b;
   color: #e2e8f0;
   border: none;
@@ -139,24 +136,24 @@ ol {
   font-size: 0.875rem;
   font-weight: 600;
   transition: background-color 0.2s ease, color 0.2s ease;
-  flex-shrink: 0; /* Prevents button from shrinking */
-  margin-left: 1rem; /* Space between link and button */
+  flex-shrink: 0; 
+  margin-left: 1rem;
 }
 
 .info-btn:hover {
-  background-color: #14b8a6; /* Teal color on hover */
+  background-color: #14b8a6; 
   color: #ffffff;
 }
 
 .info-box {
   position: absolute;
-  right: 1rem; /* Align near the info button */
-  bottom: calc(100% + 10px); /* Position above the list item with a 10px gap */
+  right: 1rem; 
+  bottom: calc(100% + 10px); 
   z-index: 10;
   width: max-content;
   min-width: 220px;
   max-width: 300px;
-  background-color: #2d3748; /* Darker, distinct background */
+  background-color: #2d3748; 
   color: #e2e8f0;
   border: 1px solid #4a5568;
   border-radius: 8px;
@@ -168,12 +165,11 @@ ol {
   text-align: left;
 }
 
-/* Optional: Adds a small triangle pointer to the tooltip */
 .info-box::after {
   content: '';
   position: absolute;
-  top: 100%; /* Position at the bottom of the tooltip */
-  right: 20px; /* Align with the info button */
+  top: 100%; 
+  right: 20px;
   border-width: 8px;
   border-style: solid;
   border-color: #2d3748 transparent transparent transparent;
@@ -206,7 +202,7 @@ ol {
 }
 
 
-/* small screens */
+
 @media (max-width: 520px) {
   .problem-set {
     padding: 1rem;

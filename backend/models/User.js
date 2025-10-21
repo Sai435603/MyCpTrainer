@@ -7,6 +7,7 @@ const DailyProblemItem = new Schema({
   index: String,
   name: String,
   rating: Number,
+  isSolved: { type: Boolean, default: false },
   tags: [String]
 }, { _id: false });
 

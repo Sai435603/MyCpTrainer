@@ -11,6 +11,13 @@ import authMiddleware from "./middleware/authMiddleware.js";
 import logOutHandler from "./controllers/logOutHandler.js";
 import fetchAnalytics from "./controllers/fetchAnalytics.js";
 import verifySession from "./controllers/verifySession.js";
+import syncProfile from "./controllers/syncProfile.js";
+import fetchStreak from "./controllers/fetchStreak.js";
+import getAllBlogs from "./controllers/getAllBlogs.js";
+import createBlog from "./controllers/createBlog.js";
+import getBlogById from "./controllers/getBlogById.js";
+import updateBlog from "./controllers/updateBlog.js";
+import deleteBlog from "./controllers/deleteBlog.js";
 import cron from "node-cron";
 import express, { json } from "express";
 import cors from "cors";
@@ -25,9 +32,7 @@ app.use(cors({ origin: "http://localhost:5173", credentials: true }));
 app.use(cookieParser());
 
 try {
-  // MongoDB connection setup
   await setUpDatabase();
-  // Initialize problem set
   await initializeProblemSet();
 
   app.listen(port, () => {
@@ -69,6 +74,20 @@ app.get("/api/rating/:user", authMiddleware, fetchRating);
 app.get("/api/heatmap/:user", authMiddleware, fetchHeatmap);
 
 app.get("/api/analytics/:user", authMiddleware, fetchAnalytics);
+
+app.get("/api/sync-profile/:user", authMiddleware, syncProfile);
+
+app.get("/api/streak/:user", authMiddleware, fetchStreak);
+
+app.get("/api/blogs", getAllBlogs);
+
+app.post("/api/blogs", createBlog);
+
+app.get("/api/blogs/:id", getBlogById);
+
+app.put("/api/blogs/:id", updateBlog);    
+
+app.delete("/api/blogs/:id", deleteBlog);
 
 app.get("/api/contests", async (req, res) => {
   try {
