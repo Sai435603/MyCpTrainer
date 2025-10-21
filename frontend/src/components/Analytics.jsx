@@ -15,7 +15,6 @@ import {
 } from "recharts";
 import "../styles/Analytics.css";
 import { BASE_URL } from "../constants.js";
-// Unique bar colors by rating‐bucket (800 → 3500)
 const BAR_COLORS = [
   "#B0B0B0", // 800
   "#D0D0D0", // 900
@@ -47,7 +46,7 @@ const BAR_COLORS = [
   "#660D0D", // 3500
 ];
 
-// Reusable pie slice colors (optional)
+
 const PIE_COLORS = [
   "#14b8a6",
   "#00d8c0",
@@ -160,7 +159,7 @@ export default function Analytics() {
         </div>
       </div>
 
-      {/* Tags Solved */}
+     
       <div className="panel">
         <h2>Tags Solved</h2>
         <div className="chart-wrapper">
@@ -201,7 +200,7 @@ export default function Analytics() {
         </div>
       </div>
 
-      {/* Unsolved Problems */}
+      
       <div className="panel">
         <h2>Unsolved Problems (Count: {unsolvedList.length})</h2>
         <div className="unsolved-list">

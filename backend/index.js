@@ -18,6 +18,7 @@ import createBlog from "./controllers/createBlog.js";
 import getBlogById from "./controllers/getBlogById.js";
 import updateBlog from "./controllers/updateBlog.js";
 import deleteBlog from "./controllers/deleteBlog.js";
+import { FRONTEND_URL } from "./constants.js";
 import cron from "node-cron";
 import express, { json } from "express";
 import cors from "cors";
@@ -28,7 +29,7 @@ const app = express();
 const port = 3000;
 
 app.use(json());
-app.use(cors({ origin: "http://localhost:5173", credentials: true }));
+app.use(cors({ origin: FRONTEND_URL, credentials: true }));
 app.use(cookieParser());
 
 try {
