@@ -1,60 +1,70 @@
 import "../styles/Nav.css";
 import { FaFire, FaUserCircle } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom"; // 1. IMPORT useNavigate
 import { useContext } from "react";
 import LoginContext from "../contexts/LoginContext.jsx";
 import MainAppContext from "../contexts/MainAppContext.jsx";
-import { BASE_URL } from "../constants.js";
-export default function Nav() {
-  const { setIsAuthenticated, streak } = useContext(LoginContext);
-  const { handleSync, isSyncing } = useContext(MainAppContext);
 
-  const handleLogout = async () => {
-    try {
-      const response = await fetch(`${BASE_URL}/api/logout`, {
-        method: "POST",
-        credentials: "include",
-      });
-      if (!response.ok) {
-        throw new Error("Logout request failed");
-      }
-      setIsAuthenticated(false);
-    } catch (error) {
-      console.error("Logout failed:", error);
-    }
+export default function Nav() {
+  const { setIsAuthenticated, streak, setUser } = useContext(LoginContext); // I added setUser here
+  const { handleSync, isSyncing } = useContext(MainAppContext);
+  const navigate = useNavigate(); // 2. INITIALIZE the hook
+
+  const handleLogout = (e) => {
+    e.stopPropagation();
+    localStorage.removeItem("token");
+    setIsAuthenticated(false);
+    setUser(""); // It's also good practice to clear the user
+    navigate("/"); // 3. ADD the navigation call
   };
 
   return (
-    <nav className="navbar">
+    <nav className="navbar" role="navigation" aria-label="Main navigation">
       <div className="navbarlogo">CP TRAINER</div>
+
       <ul className="navbarlinks">
         <li>
-          <Link to="/">PROBLEMS</Link>
+          <NavLink to="/" end>
+            PROBLEMS
+          </NavLink>
         </li>
         <li>
-          <Link to="/contests">CONTESTS</Link>
+          <NavLink to="/contests">CONTESTS</NavLink>
         </li>
         <li>
-          <Link to="/analytics">ANALYTICS</Link>
+          <NavLink to="/analytics">ANALYTICS</NavLink>
         </li>
         <li>
-          <Link to="/blogs">BLOGS</Link>
+          <NavLink to="/blogs">BLOGS</NavLink>
         </li>
       </ul>
-      <div className="navbarstreak">
+
+      <div className="navbarstreak" title={`${streak} day streak`}>
         <FaFire className="streak-icon" />
         <span className="streak-count">{streak} days</span>
       </div>
-      <button className="navbarlogin" onClick={handleSync} disabled={isSyncing}>
+
+      <button
+        type="button"
+        className="navbarlogin"
+        onClick={(e) => {
+          e.stopPropagation();
+          handleSync();
+        }}
+        disabled={isSyncing}
+      >
         {isSyncing ? "Syncing..." : "Sync Profile"}
       </button>
-      <div
-        className="profile-wrapper"
-        onClick={handleLogout}
-        style={{ cursor: "pointer" }}
-      >
-        <button className="profile-icon-btn">
-          <FaUserCircle size={28} />
+
+      <div className="profile-wrapper" style={{ marginLeft: "8px" }}>
+        <button
+          type="button"
+          className="profile-icon-btn"
+          onClick={handleLogout}
+          aria-label="Logout"
+          title="Logout"
+        >
+          <FaUserCircle size={20} />
         </button>
         <div className="profile-tooltip">Want to logout from the profile</div>
       </div>

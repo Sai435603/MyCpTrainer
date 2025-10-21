@@ -11,25 +11,33 @@ export default function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [initializing, setInitializing] = useState(true);
   const [streak, setStreak] = useState(0);
-
   useEffect(() => {
     const verifySession = async () => {
-      try {
-        const res = await fetch(`${BASE_URL}/api/auth/verify`, {
-          credentials: "include",
-        });
-        if (res.ok) {
-          const data = await res.json();
-          setIsAuthenticated(true);
-          setUser(data.user.handle);
-          setStreak(data.user.streak || 0);
+      const token = localStorage.getItem("token");
+      if (token) {
+        try {
+          const res = await fetch(`${BASE_URL}/api/auth/verify`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+
+          if (res.ok) {
+            const data = await res.json();
+            setIsAuthenticated(true);
+            setUser(data.user.handle);
+            setStreak(data.user.streak || 0);
+          } else {
+            localStorage.removeItem("token");
+          }
+        } catch (err) {
+          console.error("No valid session found:", err);
+          localStorage.removeItem("token");
         }
-      } catch (err) {
-        console.error("No valid session found on initial load");
-      } finally {
-        setInitializing(false);
       }
+      setInitializing(false);
     };
+    
     verifySession();
   }, []);
 
