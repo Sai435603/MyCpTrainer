@@ -67,7 +67,6 @@ async function verifyChallenge(req, res) {
     let statusCode;
 
     if (isReset) {
-      // --- Password Reset Logic ---
       if (!existingUser) {
         return res
           .status(404)
@@ -78,7 +77,6 @@ async function verifyChallenge(req, res) {
       successMessage = "Password reset successfully.";
       statusCode = 200;
     } else {
-      // --- New User Registration Logic ---
       if (existingUser) {
         return res
           .status(409)
