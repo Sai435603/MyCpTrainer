@@ -16,7 +16,6 @@ export default async function fetchStreak(req, res) {
         res.status(200).json({ streak: userData.streak || 0 });
 
     } catch (error) {
-        // 5. Handle any unexpected server errors.
         console.error("Error fetching streak:", error);
         res.status(500).json({ message: "Server error while fetching streak." });
     }
