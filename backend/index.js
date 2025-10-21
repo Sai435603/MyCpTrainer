@@ -8,7 +8,6 @@ import fetchLoginChallenge from "./controllers/fetchLoginChallenge.js";
 import verifyChallenge from "./controllers/verifyChallenge.js";
 import verifyUser from "./controllers/verifyUser.js";
 import authMiddleware from "./middleware/authMiddleware.js";
-import logOutHandler from "./controllers/logOutHandler.js";
 import fetchAnalytics from "./controllers/fetchAnalytics.js";
 import verifySession from "./controllers/verifySession.js";
 import syncProfile from "./controllers/syncProfile.js";
@@ -63,8 +62,6 @@ app.get("/api/challenge", fetchLoginChallenge);
 app.post("/api/signup", verifyChallenge);
 
 app.post("/api/login", verifyUser);
-
-app.post("/api/logout", logOutHandler);
 
 app.get("/api/auth/verify", authMiddleware, verifySession);
 
