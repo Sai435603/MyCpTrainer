@@ -139,11 +139,16 @@ export default async function dailyProblems(req, res) {
     const lcLinked = !!user.lcLinked;
     const cfHandle = user.cfHandle || user.handle;
 
-    // Return cached daily problems if same day
-    if (user.dailyProblems?.generatedAt && isSameDayInIST(new Date(user.dailyProblems.generatedAt), new Date())) {
+    // Return cached daily problems if same day AND not empty
+    const cachedItems = user.dailyProblems?.items || [];
+    const hasCached = user.dailyProblems?.generatedAt
+      && cachedItems.length > 0
+      && isSameDayInIST(new Date(user.dailyProblems.generatedAt), new Date());
+
+    if (hasCached) {
       return res.json({
         handle, rating: userRating, cfLinked, lcLinked,
-        problems: user.dailyProblems.items,
+        problems: cachedItems,
         dailyProblems: user.dailyProblems,
         meta: { cached: true },
       });
@@ -160,58 +165,74 @@ export default async function dailyProblems(req, res) {
       const cacheKey = `cf_submissions:${cfHandle}`;
       let cfSubs = await cacheGet(cacheKey);
       if (!cfSubs) {
-        const cfUrl = `https://codeforces.com/api/user.status?handle=${encodeURIComponent(cfHandle)}&from=1&count=1500`;
-        const cfResp = await fetch(cfUrl);
-        if (cfResp.ok) {
-          const cfJson = await cfResp.json();
-          if (cfJson.status === "OK") {
-            cfSubs = cfJson.result;
-            await cacheSet(cacheKey, cfSubs, 600);
+        try {
+          const cfUrl = `https://codeforces.com/api/user.status?handle=${encodeURIComponent(cfHandle)}&from=1&count=1500`;
+          const cfResp = await fetch(cfUrl);
+          if (cfResp.ok) {
+            const cfJson = await cfResp.json();
+            if (cfJson.status === "OK") {
+              cfSubs = cfJson.result;
+              await cacheSet(cacheKey, cfSubs, 600);
+            }
+          }
+        } catch (err) {
+          console.warn("CF API fetch failed:", err.message);
+        }
+      }
+
+      let solvedPairs = [];
+      if (cfSubs && cfSubs.length > 0) {
+        const analysis = analyzeSubmissions(cfSubs);
+        weakTags = analysis.weakTags;
+        solvedPairs = analysis.solvedPairs;
+      }
+
+      // Always 10 CF problems: 3 easy + 3 medium + 3 hard + 1 stretch
+      const cfTotal = 10;
+      const tiers = [
+        { min: Math.max(800, userRating - 300), max: Math.max(900, userRating - 100), count: 3 },
+        { min: Math.max(800, userRating - 100), max: Math.min(3500, userRating + 100), count: 3 },
+        { min: Math.min(3500, userRating + 100), max: Math.min(3500, userRating + 400), count: 3 },
+        { min: Math.min(3500, userRating + 400), max: Math.min(3500, userRating + 700), count: 1 },
+      ];
+
+      for (const tier of tiers) {
+        if (collected.length >= cfTotal) break;
+        // First try with weak tags
+        let candidates = await queryCFProblems({
+          tags: weakTags.length > 0 ? weakTags : [],
+          ratingMin: tier.min, ratingMax: tier.max,
+          solvedPairs, excludeIds: new Set([...visited, ...recentlyUsed]),
+          limit: tier.count,
+        });
+        // Fallback: no tag filter if nothing found
+        if (candidates.length === 0) {
+          candidates = await queryCFProblems({
+            tags: [], ratingMin: tier.min, ratingMax: tier.max,
+            solvedPairs, excludeIds: new Set([...visited, ...recentlyUsed]),
+            limit: tier.count,
+          });
+        }
+        for (const p of candidates) {
+          if (collected.length >= cfTotal) break;
+          if (!visited.has(p.problemId)) {
+            visited.add(p.problemId);
+            collected.push(p);
           }
         }
       }
 
-      if (cfSubs) {
-        const { weakTags: wt, solvedPairs } = analyzeSubmissions(cfSubs);
-        weakTags = wt;
-
-        // Always 10 CF problems: 3 easy + 3 medium + 3 hard + 1 stretch
-        const cfTotal = 10;
-        const tiers = [
-          { min: Math.max(800, userRating - 300), max: Math.max(800, userRating - 100), count: 3, label: "easy" },
-          { min: Math.max(800, userRating - 100), max: Math.min(3500, userRating + 100), count: 3, label: "medium" },
-          { min: Math.min(3500, userRating + 100), max: Math.min(3500, userRating + 400), count: 3, label: "hard" },
-          { min: Math.min(3500, userRating + 400), max: Math.min(3500, userRating + 700), count: 1, label: "stretch" },
-        ];
-
-        for (const tier of tiers) {
+      // Fill remaining CF slots with broader range
+      if (collected.length < cfTotal) {
+        const remaining = cfTotal - collected.length;
+        const fill = await queryCFProblems({
+          tags: [], ratingMin: 800, ratingMax: Math.min(3500, userRating + 500),
+          solvedPairs, excludeIds: new Set([...visited, ...recentlyUsed]),
+          limit: remaining,
+        });
+        for (const p of fill) {
           if (collected.length >= cfTotal) break;
-          const candidates = await queryCFProblems({
-            tags: weakTags, ratingMin: tier.min, ratingMax: tier.max,
-            solvedPairs, excludeIds: new Set([...visited, ...recentlyUsed]),
-            limit: tier.count,
-          });
-          for (const p of candidates) {
-            if (collected.length >= cfTotal) break;
-            if (!visited.has(p.problemId)) {
-              visited.add(p.problemId);
-              collected.push(p);
-            }
-          }
-        }
-
-        // Fill remaining CF slots
-        if (collected.length < cfTotal) {
-          const remaining = cfTotal - collected.length;
-          const fill = await queryCFProblems({
-            tags: [], ratingMin: Math.max(800, userRating - 400), ratingMax: Math.min(3500, userRating + 400),
-            solvedPairs, excludeIds: new Set([...visited, ...recentlyUsed]),
-            limit: remaining,
-          });
-          for (const p of fill) {
-            if (collected.length >= cfTotal) break;
-            if (!visited.has(p.problemId)) { visited.add(p.problemId); collected.push(p); }
-          }
+          if (!visited.has(p.problemId)) { visited.add(p.problemId); collected.push(p); }
         }
       }
     }
