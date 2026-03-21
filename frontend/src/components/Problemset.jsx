@@ -43,6 +43,7 @@ function problemUrl(p) {
 export default function Problemset() {
   const { problemSet } = useContext(MainAppContext);
   const [openInfoIdx, setOpenInfoIdx] = useState(null);
+  const [filter, setFilter] = useState("all"); // "all" | "codeforces" | "leetcode"
 
   const problems = useMemo(() => {
     if (!problemSet) return [];
@@ -52,13 +53,43 @@ export default function Problemset() {
     return [];
   }, [problemSet]);
 
+  const filtered = useMemo(() => {
+    if (filter === "all") return problems;
+    return problems.filter(p => (p.source || "codeforces") === filter);
+  }, [problems, filter]);
+
   const solvedCount = useMemo(() => problems.filter(p => p.isSolved).length, [problems]);
   const progressPct = problems.length > 0 ? Math.round((solvedCount / problems.length) * 100) : 0;
+
+  const cfCount = problems.filter(p => (p.source || "codeforces") === "codeforces").length;
+  const lcCount = problems.filter(p => p.source === "leetcode").length;
 
   return (
     <div className="problem-set">
       <div className="problemset-header">
         <h2>Challenge Box</h2>
+      </div>
+
+      {/* Toggle Filter */}
+      <div className="toggle-row">
+        <button
+          className={`toggle-btn ${filter === "all" ? "active" : ""}`}
+          onClick={() => setFilter("all")}
+        >
+          All ({problems.length})
+        </button>
+        <button
+          className={`toggle-btn toggle-cf ${filter === "codeforces" ? "active" : ""}`}
+          onClick={() => setFilter("codeforces")}
+        >
+          CF ({cfCount})
+        </button>
+        <button
+          className={`toggle-btn toggle-lc ${filter === "leetcode" ? "active" : ""}`}
+          onClick={() => setFilter("leetcode")}
+        >
+          LC ({lcCount})
+        </button>
       </div>
 
       {problems.length > 0 && (
@@ -71,7 +102,7 @@ export default function Problemset() {
       )}
 
       <ol className="problem-list" aria-live="polite">
-        {problems.map((p, i) => {
+        {filtered.map((p, i) => {
           const key = p.problemId ?? `${p.contestId}-${p.index}-${i}`;
           const isOpen = openInfoIdx === i;
           const rowClassName = `problem-row ${p.isSolved ? "solved" : ""}`;
@@ -134,6 +165,9 @@ export default function Problemset() {
             </li>
           );
         })}
+        {filtered.length === 0 && problems.length > 0 && (
+          <li className="empty">No {filter === "leetcode" ? "LeetCode" : "Codeforces"} problems today</li>
+        )}
         {problems.length === 0 && (
           <li className="empty">No problems available — sync your profile to get started</li>
         )}

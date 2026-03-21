@@ -100,11 +100,9 @@ export default function MainApp() {
         headers: authHeaders,
       });
       if (!res.ok) throw new Error("Failed to sync profile.");
-      const data = await res.json();
 
-      setProblemSet(data.user.dailyProblems.items);
-      setStreak(data.user.streak);
-      setHeatmapData(data.heatmap);
+      // After sync completes, refetch ALL data for full consistency
+      await fetchAllData(userr, { showLoader: false });
     } catch (error) {
       console.error("Error during profile sync:", error);
     } finally {

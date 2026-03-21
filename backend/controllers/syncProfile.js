@@ -1,15 +1,24 @@
 import fetch from 'node-fetch';
 import User from '../models/User.js';
 import Heatmap from '../models/Heatmap.js';
+import { cacheGet, cacheSet } from '../utils/redis.js';
 
 async function getAcceptedSubmissions(handle) {
+    // Try cache first
+    const cacheKey = `sync_subs:${handle}`;
+    const cached = await cacheGet(cacheKey);
+    if (cached) return cached;
+
     const url = `https://codeforces.com/api/user.status?handle=${handle}`;
     try {
         const response = await fetch(url);
         if (!response.ok) throw new Error(`Codeforces API responded with status: ${response.status}`);
         const data = await response.json();
         if (data.status !== 'OK') throw new Error(`Codeforces API error: ${data.comment}`);
-        return data.result.filter(sub => sub.verdict === 'OK');
+        const accepted = data.result.filter(sub => sub.verdict === 'OK');
+        // Cache for 5 minutes
+        await cacheSet(cacheKey, accepted, 300);
+        return accepted;
     } catch (error) {
         console.error(`Failed to fetch submissions for ${handle}:`, error);
         throw error;
@@ -67,16 +76,24 @@ async function syncProfile(req, res) {
             return res.status(404).json({ message: "User not found." });
         }
 
+        // Build solved set from CF submissions — use problemId format for both CF and LC
         const solvedProblemIds = new Set(
             acceptedSubmissions.map(sub => `${sub.problem.contestId}-${sub.problem.index}`)
         );
 
-        user.dailyProblems.items.forEach(problem => {
-            const problemId = `${problem.contestId}-${problem.index}`;
-            if (solvedProblemIds.has(problemId)) {
-                problem.isSolved = true;
-            }
-        });
+        // Update isSolved for daily problems (both CF and LC)
+        if (user.dailyProblems && Array.isArray(user.dailyProblems.items)) {
+            user.dailyProblems.items.forEach(problem => {
+                if (problem.source === "leetcode") {
+                    // LC problems can't be checked from CF API — skip
+                    return;
+                }
+                const problemId = `${problem.contestId}-${problem.index}`;
+                if (solvedProblemIds.has(problemId)) {
+                    problem.isSolved = true;
+                }
+            });
+        }
         
         user.streak = streak;
         const updatedUser = await user.save();
@@ -95,18 +112,19 @@ async function syncProfile(req, res) {
             { new: true, upsert: true }
         ).lean();
 
-       
+        // Return consistent payload matching fetchAllData expectations
         const userPayload = {
             _id: updatedUser._id,
             handle: updatedUser.handle,
             streak: updatedUser.streak,
+            rating: updatedUser.rating,
             dailyProblems: updatedUser.dailyProblems,
         };
 
         res.status(200).json({
             message: "Profile synced successfully",
             user: userPayload, 
-            heatmap: updatedHeatmap
+            heatmap: updatedHeatmap,
         });
 
     } catch (error) {

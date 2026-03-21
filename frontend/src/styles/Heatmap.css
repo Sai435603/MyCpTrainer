@@ -17,29 +17,29 @@
   margin: 0 0 1rem 0;
   font-size: 1.1rem;
   font-weight: 700;
-  color: var(--text-primary);
+  color: #ffffff;
   text-align: center;
 }
 
-/* Heatmap color scale — violet spectrum */
+/* Heatmap color scale — classic green */
 .react-calendar-heatmap .color-empty {
   fill: var(--bg-secondary);
 }
 
 .react-calendar-heatmap .color-scale-1 {
-  fill: var(--violet-500);
+  fill: #0e4429;
 }
 
 .react-calendar-heatmap .color-scale-2 {
-  fill: var(--violet-600);
+  fill: #006d32;
 }
 
 .react-calendar-heatmap .color-scale-3 {
-  fill: var(--violet-700);
+  fill: #26a641;
 }
 
 .react-calendar-heatmap .color-scale-4 {
-  fill: var(--violet-800);
+  fill: #39d353;
 }
 
 .react-calendar-heatmap text {
@@ -50,7 +50,7 @@
 /* Tooltip */
 .react-tooltip {
   background: var(--bg-elevated) !important;
-  color: var(--text-primary) !important;
+  color: #ffffff !important;
   border: 1px solid var(--border-violet) !important;
   border-radius: var(--radius-sm) !important;
   font-size: 0.8rem !important;

@@ -41,10 +41,48 @@ ol {
   display: flex;
   justify-content: center;
   width: 100%;
+  color: #ffffff;
+}
+
+/* Toggle Filter */
+.toggle-row {
+  display: flex;
+  gap: 0.4rem;
+  justify-content: center;
+}
+
+.toggle-btn {
+  padding: 0.35rem 0.9rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  border-radius: 999px;
+  border: 1px solid var(--border-default);
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  font-family: 'Inter', sans-serif;
+}
+
+.toggle-btn:hover {
+  border-color: var(--border-violet);
+  color: #ffffff;
+}
+
+.toggle-btn.active {
   background: var(--gradient-primary);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: #ffffff;
+  border-color: transparent;
+  box-shadow: var(--shadow-violet);
+}
+
+.toggle-cf.active {
+  background: var(--cf-color);
+}
+
+.toggle-lc.active {
+  background: var(--lc-color);
+  color: #000;
 }
 
 /* Progress Bar */
