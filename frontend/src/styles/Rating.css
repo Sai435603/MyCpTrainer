@@ -1,37 +1,26 @@
+/* ===== RATING CHART ===== */
+
 .rating-chart {
-  background-color: #242425;
-  padding: 1rem;
-  border-radius: 10px;
-  color: white;
-  width: 100%;
-  max-width: 100%;
-  height: 62%;
-  font-family: "Segoe UI", sans-serif;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  overflow: hidden;
-  box-sizing: border-box;
-  transition: transform 0.25s ease, box-shadow 0.25s ease, border 0.25s ease;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  transition: all var(--transition-slow);
 }
 
 .rating-chart:hover {
-  transform: scale(1.02); 
-  box-shadow: 0 8px 25px rgba(20, 184, 166, 0.3); 
-  border: 2px solid #14b8a6; 
+  border-color: var(--border-violet);
+  box-shadow: var(--shadow-violet);
 }
 
 .rating-chart h2 {
-  font-size: 1.25rem;
-  margin: 0;
-  transition: color 0.3s ease;
+  margin: 0 0 0.5rem 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-primary);
 }
 
-.rating-chart h2 {
-  transition: transform 0.3s ease, text-shadow 0.3s ease;
-}
-
-.rating-chart:hover h2 {
-  transform: scale(1.05);
-  text-shadow: 0px 4px 15px rgba(215, 222, 221, 0.6);
+.rating-container {
+  border-radius: var(--radius-md);
+  overflow: hidden;
 }

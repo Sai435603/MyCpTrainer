@@ -1,21 +1,21 @@
 import "../styles/Nav.css";
 import { FaFire, FaUserCircle } from "react-icons/fa";
-import { NavLink, useNavigate } from "react-router-dom"; // 1. IMPORT useNavigate
+import { NavLink, useNavigate } from "react-router-dom";
 import { useContext } from "react";
 import LoginContext from "../contexts/LoginContext.jsx";
 import MainAppContext from "../contexts/MainAppContext.jsx";
 
 export default function Nav() {
-  const { setIsAuthenticated, streak, setUser } = useContext(LoginContext); // I added setUser here
+  const { setIsAuthenticated, streak, setUser, user } = useContext(LoginContext);
   const { handleSync, isSyncing } = useContext(MainAppContext);
-  const navigate = useNavigate(); // 2. INITIALIZE the hook
+  const navigate = useNavigate();
 
   const handleLogout = (e) => {
     e.stopPropagation();
     localStorage.removeItem("token");
     setIsAuthenticated(false);
-    setUser(""); // It's also good practice to clear the user
-    navigate("/"); // 3. ADD the navigation call
+    setUser("");
+    navigate("/");
   };
 
   return (
@@ -53,7 +53,7 @@ export default function Nav() {
         }}
         disabled={isSyncing}
       >
-        {isSyncing ? "Syncing..." : "Sync Profile"}
+        {isSyncing ? "Syncing…" : "Sync Profile"}
       </button>
 
       <div className="profile-wrapper" style={{ marginLeft: "8px" }}>
@@ -64,9 +64,11 @@ export default function Nav() {
           aria-label="Logout"
           title="Logout"
         >
-          <FaUserCircle size={20} />
+          <FaUserCircle size={18} />
         </button>
-        <div className="profile-tooltip">Want to logout from the profile</div>
+        <div className="profile-tooltip">
+          {user ? `Logout (${user})` : "Logout"}
+        </div>
       </div>
     </nav>
   );

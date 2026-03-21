@@ -16,17 +16,25 @@ import {
 import "../styles/Analytics.css";
 import { BASE_URL } from "../constants.js";
 
+// Violet spectrum for bar chart
 const BAR_COLORS = [
-  "#B0B0B0", "#D0D0D0", "#D0D0D0", "#D0D0D0", "#7FB800", "#7FB800",
-  "#7FB800", "#7FB800", "#00A3B5", "#00A3B5", "#00A3B5", "#00A3B5",
-  "#00A3B5", "#FF9E3F", "#FF9E3F", "#FF9E3F", "#E5473D", "#E5473D",
-  "#D32F2F", "#D32F2F", "#D32F2F", "#D32F2F", "#9C1C1C", "#9C1C1C",
-  "#9C1C1C", "#660D0D", "#660D0D", "#660D0D",
+  "#71717a", "#71717a", "#71717a", "#71717a", // gray (unrated / low)
+  "#22c55e", "#22c55e", "#22c55e",             // green (easy)
+  "#059669", "#059669",                         // teal
+  "#3b82f6", "#3b82f6", "#3b82f6",             // blue
+  "#6366f1", "#6366f1",                         // indigo
+  "#8b5cf6", "#8b5cf6",                         // violet
+  "#a855f7", "#a855f7",                         // purple
+  "#d946ef", "#d946ef",                         // fuchsia
+  "#ec4899", "#ec4899",                         // pink
+  "#ef4444", "#ef4444",                         // red
+  "#dc2626", "#dc2626", "#dc2626", "#dc2626",  // dark red
 ];
 
 const PIE_COLORS = [
-  "#14b8a6", "#00d8c0", "#82ca9d", "#8dd1e1", "#ffc658",
-  "#a4de6c", "#d0ed57", "#ffc0cb", "#d88884", "#e182ca", "#58ffc6",
+  "#8b5cf6", "#a855f7", "#c084fc", "#7c3aed",
+  "#6366f1", "#818cf8", "#a5b4fc", "#4f46e5",
+  "#d946ef", "#f472b6", "#fb923c",
 ];
 
 export default function Analytics() {
@@ -127,7 +135,7 @@ export default function Analytics() {
   return (
     <div className="analytics-container">
       <div className="panel">
-        <h2>Problem Ratings</h2>
+        <h2>Problem Ratings Distribution</h2>
         {loading
           ? renderLoading("Loading ratings…")
           : solvedData.length === 0
@@ -136,12 +144,22 @@ export default function Analytics() {
             <div className="chart-wrapper">
               <ResponsiveContainer width="100%" height={300}>
                 <BarChart data={solvedData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
-                  <XAxis dataKey="rating" stroke="#fff" />
-                  <YAxis stroke="#fff" />
-                  <Tooltip contentStyle={{ backgroundColor: "#191a20", borderColor: "#14b8a6", color: "#fff" }} />
-                  <Bar dataKey="count">
-                    {solvedData.map((_, idx) => <Cell key={idx} fill={BAR_COLORS[idx] || "#888"} />)}
+                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
+                  <XAxis dataKey="rating" stroke="#71717a" tick={{ fill: "#a1a1aa", fontSize: 11 }} />
+                  <YAxis stroke="#71717a" tick={{ fill: "#a1a1aa", fontSize: 11 }} />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: "#16161e",
+                      borderColor: "rgba(124, 58, 237, 0.3)",
+                      color: "#f4f4f5",
+                      borderRadius: "12px",
+                      boxShadow: "0 8px 32px rgba(124, 58, 237, 0.2)",
+                    }}
+                  />
+                  <Bar dataKey="count" radius={[4, 4, 0, 0]}>
+                    {solvedData.map((_, idx) => (
+                      <Cell key={idx} fill={BAR_COLORS[idx] || "#8b5cf6"} />
+                    ))}
                   </Bar>
                 </BarChart>
               </ResponsiveContainer>
@@ -150,21 +168,40 @@ export default function Analytics() {
       </div>
 
       <div className="panel">
-        <h2>Tags Solved</h2>
+        <h2>Tags Distribution</h2>
         {loading
           ? renderLoading("Loading tags…")
           : tagsData.length === 0
           ? renderNoData("No tags to display.")
           : (
             <div className="chart-wrapper">
-              <ResponsiveContainer width="100%" height={300}>
+              <ResponsiveContainer width="100%" height={320}>
                 <PieChart>
-                  <Pie data={tagsData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={100} label={{ fill: "#fff" }}>
-                    {tagsData.map((_, idx) => <Cell key={idx} fill={PIE_COLORS[idx % PIE_COLORS.length]} />)}
+                  <Pie
+                    data={tagsData}
+                    dataKey="value"
+                    nameKey="name"
+                    cx="50%"
+                    cy="50%"
+                    outerRadius={100}
+                    label={{ fill: "#a1a1aa", fontSize: 11 }}
+                  >
+                    {tagsData.map((_, idx) => (
+                      <Cell key={idx} fill={PIE_COLORS[idx % PIE_COLORS.length]} />
+                    ))}
                   </Pie>
-                  <Legend wrapperStyle={{ maxHeight: 180, overflowY: "auto", paddingRight: 8 }}
-                          formatter={(value) => <span style={{ color: "#fff" }}>{value}</span>} />
-                  <Tooltip contentStyle={{ backgroundColor: "#191a20", borderColor: "#14b8a6", color: "#fff" }} />
+                  <Legend
+                    wrapperStyle={{ maxHeight: 180, overflowY: "auto", paddingRight: 8 }}
+                    formatter={(value) => <span style={{ color: "#a1a1aa", fontSize: "0.8rem" }}>{value}</span>}
+                  />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: "#16161e",
+                      borderColor: "rgba(124, 58, 237, 0.3)",
+                      color: "#f4f4f5",
+                      borderRadius: "12px",
+                    }}
+                  />
                 </PieChart>
               </ResponsiveContainer>
             </div>
@@ -172,14 +209,19 @@ export default function Analytics() {
       </div>
 
       <div className="panel">
-        <h2>Unsolved Problems (Count: {unsolvedList.length})</h2>
+        <h2>Unsolved Problems ({unsolvedList.length})</h2>
         <div className="unsolved-list">
           {loading
             ? renderLoading("Loading unsolved…")
             : unsolvedList.length === 0
-            ? <span style={{ color: "#cfd8dc" }}>No unsolved problems</span>
-            : unsolvedList.map((code) => <span key={code}>{code}</span>)
+            ? <span style={{ color: "var(--text-muted)", fontStyle: "italic" }}>All attempted problems solved! 🎉</span>
+            : unsolvedList.slice(0, 50).map((code) => <span key={code}>{code}</span>)
           }
+          {!loading && unsolvedList.length > 50 && (
+            <span style={{ color: "var(--text-muted)", fontStyle: "italic" }}>
+              …and {unsolvedList.length - 50} more
+            </span>
+          )}
         </div>
       </div>
     </div>

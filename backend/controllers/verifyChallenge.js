@@ -107,9 +107,16 @@ async function verifyChallenge(req, res) {
 
     // --- Step 4: Create JWT and send response ---
     // <-- FIX: Correctly creating payload from the user that was just saved
-    const payload = { user: { id: userToSave._id, handle: userToSave.handle } };
+    const payload = {
+      user: {
+        id: userToSave._id,
+        handle: userToSave.handle,
+        rating: userToSave.rating || 800,
+        streak: userToSave.streak || 0,
+      },
+    };
     const token = jwt.sign(payload, process.env.JWT_SECRET, {
-      expiresIn: "1d",
+      expiresIn: "7d",
     });
     
     return res.status(statusCode).json({

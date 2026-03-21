@@ -4,6 +4,7 @@ import fetchRating from "./controllers/fetchRating.js";
 import fetchHeatmap from "./controllers/fetchHeatmap.js";
 import setUpDatabase from "./utils/setUpDatabase.js";
 import initializeProblemSet from "./utils/initializeProblemSet.js";
+import initializeLeetcode from "./utils/initializeLeetcode.js";
 import fetchLoginChallenge from "./controllers/fetchLoginChallenge.js";
 import verifyChallenge from "./controllers/verifyChallenge.js";
 import verifyUser from "./controllers/verifyUser.js";
@@ -33,7 +34,12 @@ app.use(cookieParser());
 
 try {
   await setUpDatabase();
-  await initializeProblemSet();
+
+  // Initialize problem sets in parallel for faster startup
+  await Promise.allSettled([
+    initializeProblemSet(),
+    initializeLeetcode(),
+  ]);
 
   app.listen(port, () => {
     console.log(`Server is listening on port ${port}`);
@@ -43,10 +49,13 @@ try {
     "0 0 * * *",
     async () => {
       try {
-        await initializeProblemSet();
-        console.log("Problem set initialized successfully.");
+        await Promise.allSettled([
+          initializeProblemSet(),
+          initializeLeetcode(),
+        ]);
+        console.log("Problem sets initialized successfully.");
       } catch (error) {
-        console.error("Error initializing problem set:", error);
+        console.error("Error initializing problem sets:", error);
       }
     },
     {

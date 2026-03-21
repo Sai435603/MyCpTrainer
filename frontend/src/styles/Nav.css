@@ -1,165 +1,210 @@
+/* ===== NAVBAR ===== */
+
 .navbar {
   display: flex;
-  flex-wrap: wrap;          
+  flex-wrap: wrap;
   align-items: center;
-  padding: 1rem 2rem;
+  padding: 0.75rem 2rem;
   width: 100%;
-  background-color: #0d1117;
-  box-shadow: 0 5px 100px rgba(252, 252, 250, 0.05); 
+  background: rgba(9, 9, 11, 0.8);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border-bottom: 1px solid var(--glass-border);
   position: fixed;
   top: 0;
   z-index: 100;
-  font-family: 'sans-serif';
   box-sizing: border-box;
+  transition: background var(--transition-default);
 }
 
+/* Logo */
 .navbarlogo {
-  font-size: 1.5rem;
-  font-weight: bold;
-  color: #ffffff;
+  font-size: 1.35rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
-/* Navbar links */
+/* Links */
 .navbarlinks {
   list-style: none;
   display: flex;
   flex-wrap: wrap;
-  gap: 1.5rem;
+  gap: 0.25rem;
   margin-left: 2rem;
 }
 
 .navbarlinks li {
   text-decoration: none;
-  font-size: 1rem;
-  color: #cfd8dc;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-secondary);
   position: relative;
-  font-family: 'sans-serif';
-  transition: color 0.2s ease-in-out, text-shadow 0.2s ease-in-out;
+  transition: color var(--transition-fast);
 }
 
-/* Remove underline from <Link> (anchor tags) */
 .navbarlinks li a {
   text-decoration: none;
-  color: inherit; /* inherit color from li */
-  transition: color 0.2s ease-in-out, text-shadow 0.2s ease-in-out;
+  color: inherit;
+  transition: color var(--transition-fast);
+  padding: 0.5rem 0.85rem;
+  border-radius: var(--radius-sm);
+  display: block;
+  letter-spacing: 0.04em;
 }
 
 .navbarlinks li a:hover {
-  color: #ffffff;
-  text-shadow: 
-    0 3px 30px #ffffff, 
-    0 5px 20px #ffffff;
-  cursor: pointer;
+  color: var(--text-primary);
+  background: rgba(124, 58, 237, 0.1);
 }
 
-.navbarlinks li:hover {
-  color: #ffffff;
-  text-shadow: 
-    0 3px 30px #ffffff, 
-    0 5px 20px #ffffff;
-  cursor: pointer;
+.navbarlinks li a.active {
+  color: var(--violet-400);
+  background: rgba(124, 58, 237, 0.15);
+  box-shadow: 0 0 20px rgba(124, 58, 237, 0.1);
 }
 
-
-/* Streak info */
+/* Streak */
 .navbarstreak {
   display: flex;
   align-items: center;
   margin-left: auto;
-  margin-right: 1.5rem;
+  margin-right: 1rem;
   gap: 0.5rem;
-  color: #cfd8dc;
+  color: var(--text-secondary);
+  padding: 0.4rem 0.8rem;
+  background: rgba(124, 58, 237, 0.08);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-violet);
 }
 
 .streak-icon {
-  font-size: 1.2rem;
+  font-size: 1rem;
+  color: #f59e0b;
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+@keyframes pulse-glow {
+  0%, 100% { filter: drop-shadow(0 0 2px #f59e0b); }
+  50% { filter: drop-shadow(0 0 8px #f59e0b); }
 }
 
 .streak-count {
-  font-size: 1rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-primary);
 }
 
-/* Login button */
+/* Sync Button */
 .navbarlogin {
-  padding: 0.5rem 1rem;
-  font-size: 1rem;
-  color: #ffffff;
-  background-color: transparent;
-  border: 2px solid #ffffff;
-  border-radius: 4px;
+  padding: 0.45rem 1rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  background: transparent;
+  border: 1px solid var(--border-violet);
+  border-radius: var(--radius-sm);
   cursor: pointer;
-  margin-right: 20px;
-  transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+  margin-right: 12px;
+  transition: all var(--transition-fast);
+  letter-spacing: 0.02em;
 }
 
 .navbarlogin:hover {
-  background-color: #ffffff;
-  color: #1f2128;
+  background: var(--gradient-primary);
+  color: #fff;
+  border-color: transparent;
+  box-shadow: var(--shadow-violet);
+  transform: translateY(-1px);
 }
 
+.navbarlogin:disabled {
+  opacity: 0.5;
+  cursor: wait;
+  transform: none;
+}
+
+/* Profile */
 .profile-wrapper {
   position: relative;
   display: flex;
   align-items: center;
 }
 
-/* Circle button */
 .profile-icon-btn {
-  width: 40px;
-  height: 40px;
-  border: none;
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--border-violet);
   border-radius: 50%;
-  background-color: #f0f0f0;
+  background: var(--bg-card);
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: default;
+  cursor: pointer;
   padding: 0;
-  transition: background-color 0.2s ease;
+  transition: all var(--transition-fast);
+  color: var(--violet-400);
 }
 
 .profile-icon-btn:hover {
-  background-color: #e0e0e0;
-  cursor: pointer;
+  background: var(--violet-600);
+  border-color: var(--violet-500);
+  color: #fff;
+  box-shadow: 0 0 16px rgba(124, 58, 237, 0.3);
 }
 
-/* Tooltip */
 .profile-tooltip {
   position: absolute;
   top: 100%;
   right: 0;
-  transform: translateY(6px);
-  background-color: #5f5b5b;
-  color: #fff;
-  padding: 6px 10px;
-  border-radius: 6px;
-  font-size: 13px;
+  transform: translateY(8px);
+  background: var(--bg-elevated);
+  color: var(--text-secondary);
+  padding: 8px 14px;
+  border-radius: var(--radius-sm);
+  font-size: 0.75rem;
   white-space: nowrap;
   opacity: 0;
   visibility: hidden;
-  transition: opacity 0.2s ease, transform 0.2s ease;
+  transition: all var(--transition-fast);
   pointer-events: none;
+  border: 1px solid var(--border-subtle);
+  box-shadow: var(--shadow-md);
 }
 
 .profile-wrapper:hover .profile-tooltip {
   opacity: 1;
   visibility: visible;
-  transform: translateY(0);
+  transform: translateY(4px);
+}
+
+@media (max-width: 768px) {
+  .navbar {
+    padding: 0.6rem 1rem;
+  }
+  .navbarlinks {
+    margin-left: 1rem;
+    gap: 0.125rem;
+  }
+  .navbarlinks li a {
+    padding: 0.4rem 0.6rem;
+    font-size: 0.8rem;
+  }
+  .navbarlogin {
+    margin-right: 8px;
+    padding: 0.35rem 0.7rem;
+    font-size: 0.8rem;
+  }
 }
 
 @media (max-width: 600px) {
-  .navbar {
-    padding: 0.75rem 1rem;
+  .navbarlogo {
+    font-size: 1.1rem;
   }
-
-  .navbarlinks {
-    margin-left: 1rem;
-    gap: 1rem;
-  }
-
-  .navbarlogin {
-    margin-right: 10px;
-    padding: 0.4rem 0.8rem;
-    font-size: 0.9rem;
+  .navbarstreak {
+    display: none;
   }
 }

@@ -1,5 +1,8 @@
+import { cacheGet, cacheSet } from "../utils/redis.js";
+
 const CF_API_URL = "https://codeforces.com/api/user.status?handle=";
 const SUBMISSION_COUNT = 100000;
+const CACHE_TTL = 300; // 5 minutes
 
 async function fetchAnalytics(req, res) {
   const { handle } = req.user;
@@ -11,6 +14,14 @@ async function fetchAnalytics(req, res) {
   }
 
   try {
+    // Try cached data first
+    const cacheKey = `analytics:${handle}`;
+    const cachedData = await cacheGet(cacheKey);
+
+    if (cachedData) {
+      return res.json({ result: cachedData });
+    }
+
     const resp = await fetch(
       `${CF_API_URL}${handle}&from=1&count=${SUBMISSION_COUNT}`
     );
@@ -25,6 +36,10 @@ async function fetchAnalytics(req, res) {
         .status(502)
         .json({ error: "Unexpected response from Codeforces API", raw: data });
     }
+
+    // Cache the result
+    await cacheSet(cacheKey, data.result, CACHE_TTL);
+
     return res.json({ result: data.result });
   } catch (err) {
     console.error(`Error in fetchAnalytics for ${handle}:`, err);

@@ -285,7 +285,7 @@ export default function Blog() {
         // If the delete fails, alert the user and refetch the data to revert the UI
         alert("Failed to delete the post. Restoring feed.");
         console.error("Delete failed, status:", response.status);
-        const reResp = await fetch("${BASE_URL}/api/blogs");
+        const reResp = await fetch(`${BASE_URL}/api/blogs`);
         if (reResp.ok) {
           const data = await reResp.json();
           const storedAuthor = getLocalAuthor();
@@ -304,7 +304,7 @@ export default function Blog() {
       alert("An error occurred while deleting the post. Restoring feed.");
       console.error("Error deleting post:", err);
       // Also refetch on any other error
-      const reResp = await fetch("${BASE_URL}/api/blogs");
+      const reResp = await fetch(`${BASE_URL}/api/blogs`);
       if (reResp.ok) {
         const data = await reResp.json();
         const storedAuthor = getLocalAuthor();

@@ -1,5 +1,10 @@
 import pkg from '@qatadaazzeh/atcoder-api';
 const { fetchUpcomingContests } = pkg;
+import { cacheGet, cacheSet } from '../utils/redis.js';
+
+const CACHE_KEY = 'upcoming_contests';
+const CACHE_TTL = 3600; // 1 hour
+
 /**
  * Codeforces
  */
@@ -10,11 +15,12 @@ async function getCodeforcesContests() {
     if (status !== "OK" || !Array.isArray(result)) return [];
 
     return result
-      .filter((c) => c.phase === "BEFORE") // only upcoming
+      .filter((c) => c.phase === "BEFORE")
       .map((c) => ({
         platform: "Codeforces",
         name: c.name,
         start: new Date(c.startTimeSeconds * 1000).toISOString(),
+        duration: c.durationSeconds || null,
         phase: c.phase,
         url: `https://codeforces.com/contest/${c.id}`,
       }));
@@ -36,6 +42,7 @@ async function getCodeChefContests() {
       platform: "CodeChef",
       name: c.contest_name,
       start: new Date(c.contest_start_date_iso).toISOString(),
+      duration: c.contest_duration ? parseInt(c.contest_duration) * 60 : null,
       phase: c.status,
       url: `https://www.codechef.com/${c.contest_code}`,
     }));
@@ -58,6 +65,7 @@ async function getAtCoderContests() {
         platform: "AtCoder",
         name: c.contestName,
         start: new Date(c.contestTime).toISOString(),
+        duration: null,
         phase: "BEFORE",
         url: c.contestUrl,
       }));
@@ -101,6 +109,7 @@ async function getLeetCodeContests() {
         platform: "LeetCode",
         name: c.title,
         start: new Date(c.startTime * 1000).toISOString(),
+        duration: c.duration || null,
         phase: "BEFORE",
         url: `https://leetcode.com/contest/${c.titleSlug}`,
       }));
@@ -111,9 +120,13 @@ async function getLeetCodeContests() {
 }
 
 /**
- * Combine all three
+ * Combine all four — with Redis caching
  */
 async function fetchUpcomingcontests() {
+  // Try cache first
+  const cached = await cacheGet(CACHE_KEY);
+  if (cached) return cached;
+
   const [cf, cc, ac, lc] = await Promise.all([
     getCodeforcesContests(),
     getCodeChefContests(),
@@ -125,6 +138,9 @@ async function fetchUpcomingcontests() {
 
   // Sort by start date
   allContests.sort((a, b) => new Date(a.start) - new Date(b.start));
+
+  // Cache for 1 hour
+  await cacheSet(CACHE_KEY, allContests, CACHE_TTL);
 
   return allContests;
 }

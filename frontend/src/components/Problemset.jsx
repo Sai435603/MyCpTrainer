@@ -2,6 +2,44 @@ import "../styles/Problemset.css";
 import { useContext, useMemo, useState } from "react";
 import MainAppContext from "../contexts/MainAppContext";
 
+function getDifficultyClass(p) {
+  if (p.source === "leetcode") {
+    const d = (p.difficulty || "").toLowerCase();
+    if (d === "easy") return "easy";
+    if (d === "medium") return "medium";
+    if (d === "hard") return "hard";
+    return "medium";
+  }
+  const r = p.rating;
+  if (!r) return "";
+  if (r <= 1000) return "warm-up";
+  if (r <= 1300) return "easy";
+  if (r <= 1600) return "medium";
+  if (r <= 2000) return "hard";
+  if (r <= 2400) return "expert";
+  return "legendary";
+}
+
+function getDifficultyLabel(p) {
+  if (p.source === "leetcode") return p.difficulty || "Medium";
+  const r = p.rating;
+  if (!r) return "";
+  if (r <= 1000) return "Warm-up";
+  if (r <= 1300) return "Easy";
+  if (r <= 1600) return "Medium";
+  if (r <= 2000) return "Hard";
+  if (r <= 2400) return "Expert";
+  return "Legendary";
+}
+
+function problemUrl(p) {
+  if (p.source === "leetcode" && p.titleSlug) {
+    return `https://leetcode.com/problems/${p.titleSlug}/`;
+  }
+  if (!p.contestId || !p.index) return "#";
+  return `https://codeforces.com/contest/${p.contestId}/problem/${p.index}`;
+}
+
 export default function Problemset() {
   const { problemSet } = useContext(MainAppContext);
   const [openInfoIdx, setOpenInfoIdx] = useState(null);
@@ -14,38 +52,55 @@ export default function Problemset() {
     return [];
   }, [problemSet]);
 
-  function cfUrl(problem) {
-    if (!problem) return "#";
-    const cid = problem.contestId;
-    const idx = problem.index;
-    if (!cid || !idx) return "#";
-    return `https://codeforces.com/contest/${cid}/problem/${idx}`;
-  }
+  const solvedCount = useMemo(() => problems.filter(p => p.isSolved).length, [problems]);
+  const progressPct = problems.length > 0 ? Math.round((solvedCount / problems.length) * 100) : 0;
 
   return (
     <div className="problem-set">
       <div className="problemset-header">
         <h2>Challenge Box</h2>
       </div>
+
+      {problems.length > 0 && (
+        <div className="progress-stats">
+          <div className="progress-track">
+            <div className="progress-fill" style={{ width: `${progressPct}%` }} />
+          </div>
+          <span className="progress-label">{solvedCount}/{problems.length} solved</span>
+        </div>
+      )}
+
       <ol className="problem-list" aria-live="polite">
         {problems.map((p, i) => {
           const key = p.problemId ?? `${p.contestId}-${p.index}-${i}`;
           const isOpen = openInfoIdx === i;
-
-          // Conditionally add the 'solved' class
           const rowClassName = `problem-row ${p.isSolved ? "solved" : ""}`;
+          const diffClass = getDifficultyClass(p);
+          const diffLabel = getDifficultyLabel(p);
+          const source = p.source || "codeforces";
 
           return (
             <li key={key} className={rowClassName}>
               <a
-                href={cfUrl(p)}
+                href={problemUrl(p)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="problem-link"
-                title={`${p.name} — ${p.rating ?? "—"} pts`}
+                title={`${p.name} — ${p.rating ?? diffLabel}`}
               >
                 <span className="problem-title">{p.name}</span>
               </a>
+
+              <div className="problem-badges">
+                <span className={`badge badge-source ${source}`}>
+                  {source === "leetcode" ? "LC" : "CF"}
+                </span>
+                {diffLabel && (
+                  <span className={`badge badge-difficulty ${diffClass}`}>
+                    {diffLabel}
+                  </span>
+                )}
+              </div>
 
               <button
                 className="info-btn"
@@ -59,17 +114,15 @@ export default function Problemset() {
               {isOpen && (
                 <div id={`info-box-${i}`} className="info-box">
                   <div className="info-row">
-                    <strong>Rating:</strong>
-                    <span>{p.rating ?? "N/A"}</span>
+                    <strong>{source === "leetcode" ? "Difficulty:" : "Rating:"}</strong>
+                    <span>{source === "leetcode" ? (p.difficulty || "N/A") : (p.rating ?? "N/A")}</span>
                   </div>
                   <div className="info-row tags-row">
                     <strong>Tags:</strong>
                     <div className="tags">
                       {p.tags && p.tags.length > 0 ? (
                         p.tags.map((t) => (
-                          <span key={t} className="tag">
-                            {t}
-                          </span>
+                          <span key={t} className="tag">{t}</span>
                         ))
                       ) : (
                         <span className="tag">none</span>
@@ -82,7 +135,7 @@ export default function Problemset() {
           );
         })}
         {problems.length === 0 && (
-          <li className="empty">No problems available</li>
+          <li className="empty">No problems available — sync your profile to get started</li>
         )}
       </ol>
     </div>

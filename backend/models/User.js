@@ -7,8 +7,10 @@ const DailyProblemItem = new Schema({
   index: String,
   name: String,
   rating: Number,
+  difficulty: String,
   isSolved: { type: Boolean, default: false },
-  tags: [String]
+  tags: [String],
+  source: { type: String, enum: ["codeforces", "leetcode"], default: "codeforces" }
 }, { _id: false });
 
 const DailyProblemsSchema = new Schema({

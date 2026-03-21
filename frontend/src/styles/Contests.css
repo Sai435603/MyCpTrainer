@@ -1,145 +1,141 @@
-html, body {
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  height: 100%;
-  box-sizing: border-box;
-  background-color: #0f1115; 
-  font-family: "Segoe UI", sans-serif;
-}
+/* ===== CONTESTS ===== */
 
 .contests {
-  width: 100%;
-  max-width: 100%;
-  margin: 0 auto;
-  padding: 2rem 5.5rem;
-  padding-top: calc(2rem + 70px); 
-  border-radius: 12px;
-  min-height: calc(100vh - 70px - 4rem); 
-  color: #ffffff;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1rem;
-  transition: transform 0.25s ease, box-shadow 0.25s ease, border 0.25s ease;
-  background-color: #0f1115;
+  padding: 5rem 4% 3rem 4%;
+  background: var(--bg-primary);
+  min-height: 100vh;
+  color: var(--text-primary);
 }
 
-.title {
-  margin-bottom: 1rem;
+.contests .title {
   font-size: 1.5rem;
-  font-weight: 600;
-  text-align: center;
-  border-radius: 15px;
-  padding: 8px 12px;
-  transition: transform 0.3s ease, text-shadow 0.3s ease;
+  font-weight: 800;
+  margin-bottom: 1.5rem;
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
-
-.contests:hover .title {
-  transform: scale(1.05);
-  text-shadow: 0 4px 12px rgba(215, 222, 221, 0.6);
-}
-
 
 .contest-list {
-  width: 100%;
+  list-style: none;
+  padding: 0;
+  margin: 0;
   display: grid;
-  grid-template-columns: repeat(3, 1fr); 
-  gap: 2.5rem;
-  padding: 1rem 0;
-  margin-top: 1rem;
-  box-sizing: border-box;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 1rem;
 }
 
-
 .contest-item {
-  list-style: none;
-  background-color: #242425;
-  border-radius: 10px;
-  padding: 1rem;
   display: flex;
-  flex-direction: column;
   align-items: center;
-  transition: transform 0.3s ease, box-shadow 0.3s ease, color 0.25s ease;
+  gap: 1rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem;
+  transition: all var(--transition-default);
 }
 
 .contest-item:hover {
-  transform: scale(1.03);
-  box-shadow: 0 8px 25px rgba(255, 255, 255, 0.3);
-  cursor: pointer;
-  background-color: #ffffff;
+  transform: translateY(-2px);
+  border-color: var(--border-violet);
+  box-shadow: var(--shadow-violet);
 }
-
-.contest-item:hover .contest-name,
-.contest-item:hover .contest-date {
-  color: #000000;
-}
-
 
 .contest-logo {
-  width: 100px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-sm);
   object-fit: contain;
-  margin-bottom: 0.75rem;
+  background: var(--bg-secondary);
+  padding: 6px;
+  flex-shrink: 0;
 }
 
 .contest-details {
-  text-align: center;
+  flex: 1;
+  min-width: 0;
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
 }
 
 .contest-name {
-  font-size: 1rem;
+  font-size: 0.95rem;
   font-weight: 600;
-  padding: 0 0.5rem;
-  word-wrap: break-word;
-  transition: color 0.25s ease;
+  color: var(--text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .contest-date {
-  font-size: 0.9rem;
-  color: #a0aec0;
-  transition: color 0.25s ease;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.contest-countdown {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--violet-400);
+  padding: 2px 8px;
+  background: rgba(124, 58, 237, 0.1);
+  border-radius: var(--radius-sm);
+  display: inline-block;
+  margin-top: 4px;
 }
 
 .contest-link {
-  margin-top: 0.5rem;
-  color: #14b8a6;
-  font-size: 0.9rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--violet-400);
   text-decoration: none;
-  transition: text-decoration 0.2s ease;
+  transition: color var(--transition-fast);
 }
 
 .contest-link:hover {
-  text-decoration: underline;
+  color: var(--violet-300);
 }
 
-@media (max-width: 1024px) {
-  .contest-list {
-    grid-template-columns: repeat(2, 1fr);
-  }
+.contest-platform-badge {
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 999px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.contest-platform-badge.Codeforces {
+  color: var(--cf-color);
+  background: rgba(59, 130, 246, 0.1);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+}
+
+.contest-platform-badge.LeetCode {
+  color: var(--lc-color);
+  background: rgba(245, 158, 11, 0.1);
+  border: 1px solid rgba(245, 158, 11, 0.2);
+}
+
+.contest-platform-badge.CodeChef {
+  color: #8b6914;
+  background: rgba(139, 105, 20, 0.1);
+  border: 1px solid rgba(139, 105, 20, 0.2);
+}
+
+.contest-platform-badge.AtCoder {
+  color: var(--ac-color);
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.2);
 }
 
 @media (max-width: 768px) {
-  .contest-list {
-    grid-template-columns: repeat(2, 1fr);
+  .contests {
+    padding: 4.5rem 1rem 2rem 1rem;
   }
-}
-
-@media (max-width: 480px) {
   .contest-list {
     grid-template-columns: 1fr;
-    padding: 0.5rem;
-  }
-
-  .contest-item {
-    padding: 0.75rem;
-  }
-
-  .contest-logo {
-    width: 80px;
-    height: 35px;
   }
 }
