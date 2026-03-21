@@ -175,12 +175,12 @@ export default async function dailyProblems(req, res) {
         const { weakTags: wt, solvedPairs } = analyzeSubmissions(cfSubs);
         weakTags = wt;
 
-        // Difficulty distribution: 2 easy + 3 medium + 2 hard + 1 stretch = 8 if only CF, else 7
-        const cfTotal = lcLinked ? 7 : 10;
+        // Always 10 CF problems: 3 easy + 3 medium + 3 hard + 1 stretch
+        const cfTotal = 10;
         const tiers = [
-          { min: Math.max(800, userRating - 300), max: Math.max(800, userRating - 100), count: 2, label: "easy" },
+          { min: Math.max(800, userRating - 300), max: Math.max(800, userRating - 100), count: 3, label: "easy" },
           { min: Math.max(800, userRating - 100), max: Math.min(3500, userRating + 100), count: 3, label: "medium" },
-          { min: Math.min(3500, userRating + 100), max: Math.min(3500, userRating + 400), count: Math.max(1, cfTotal - 5), label: "hard" },
+          { min: Math.min(3500, userRating + 100), max: Math.min(3500, userRating + 400), count: 3, label: "hard" },
           { min: Math.min(3500, userRating + 400), max: Math.min(3500, userRating + 700), count: 1, label: "stretch" },
         ];
 
@@ -216,15 +216,13 @@ export default async function dailyProblems(req, res) {
       }
     }
 
-    // ─── LC PROBLEMS ───
+    // ─── LC PROBLEMS (always 5) ───
     if (lcLinked) {
-      const lcTotal = cfLinked ? 3 : 10;
+      const lcTotal = 5;
       const lcWeakTags = weakTags.map(t => CF_TO_LC_TAGS[t.toLowerCase()]).filter(Boolean);
 
-      // Difficulty mix for LC
-      const lcMix = cfLinked
-        ? ["Easy", "Medium", "Hard"]
-        : ["Easy", "Easy", "Medium", "Medium", "Medium", "Hard", "Hard", "Hard", "Easy", "Medium"];
+      // Difficulty mix: 2 Easy + 2 Medium + 1 Hard = 5
+      const lcMix = ["Easy", "Easy", "Medium", "Medium", "Hard"];
 
       for (const diff of lcMix) {
         if (collected.filter(p => p.source === "leetcode").length >= lcTotal) break;
@@ -241,7 +239,7 @@ export default async function dailyProblems(req, res) {
 
     // Sort: CF first (by rating asc), then LC (by difficulty)
     const diffOrder = { Easy: 1, Medium: 2, Hard: 3 };
-    const finalProblems = collected.slice(0, 10).sort((a, b) => {
+    const finalProblems = collected.slice(0, 15).sort((a, b) => {
       if (a.source !== b.source) return a.source === "codeforces" ? -1 : 1;
       if (a.source === "codeforces") return (a.rating ?? 0) - (b.rating ?? 0);
       return (diffOrder[a.difficulty] || 2) - (diffOrder[b.difficulty] || 2);

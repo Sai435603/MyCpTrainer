@@ -88,6 +88,8 @@
 
 /* Sync Button */
 .navbarlogin {
+  display: flex;
+  align-items: center;
   padding: 0.45rem 1rem;
   font-size: 0.85rem;
   font-weight: 600;
@@ -98,6 +100,15 @@
   cursor: pointer;
   margin-right: 12px;
   transition: all var(--transition-fast);
+}
+
+.spin-icon {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
 .navbarlogin:hover {

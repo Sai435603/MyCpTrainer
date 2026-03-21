@@ -1,5 +1,5 @@
 import "../styles/Nav.css";
-import { FaFire, FaUserCircle, FaChevronDown, FaLink, FaSignOutAlt } from "react-icons/fa";
+import { FaFire, FaUserCircle, FaChevronDown, FaLink, FaSignOutAlt, FaSync } from "react-icons/fa";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useContext, useState, useRef, useEffect } from "react";
 import LoginContext from "../contexts/LoginContext.jsx";
@@ -56,7 +56,8 @@ export default function Nav() {
           onClick={() => handleSync()}
           disabled={isSyncing}
         >
-          {isSyncing ? "Syncing…" : "Sync Profile"}
+          <FaSync size={12} className={isSyncing ? "spin-icon" : ""} style={{ marginRight: 6 }} />
+          {isSyncing ? "Syncing…" : "Sync"}
         </button>
 
         {/* Profile Dropdown */}
