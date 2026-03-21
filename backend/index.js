@@ -18,6 +18,8 @@ import createBlog from "./controllers/createBlog.js";
 import getBlogById from "./controllers/getBlogById.js";
 import updateBlog from "./controllers/updateBlog.js";
 import deleteBlog from "./controllers/deleteBlog.js";
+import { getProfile, linkProfile, unlinkProfile } from "./controllers/linkProfile.js";
+import solveProblem from "./controllers/solveProblem.js";
 import { FRONTEND_URL } from "./constants.js";
 import cron from "node-cron";
 import express, { json } from "express";
@@ -75,6 +77,7 @@ app.post("/api/login", verifyUser);
 app.get("/api/auth/verify", authMiddleware, verifySession);
 
 app.get("/api/problems/:user", authMiddleware, dailyProblems);
+app.post("/api/problems/solve", authMiddleware, solveProblem);
 
 app.get("/api/rating/:user", authMiddleware, fetchRating);
 
@@ -85,6 +88,10 @@ app.get("/api/analytics/:user", authMiddleware, fetchAnalytics);
 app.get("/api/sync-profile/:user", authMiddleware, syncProfile);
 
 app.get("/api/streak/:user", authMiddleware, fetchStreak);
+
+app.get("/api/profile", authMiddleware, getProfile);
+app.put("/api/profile/link", authMiddleware, linkProfile);
+app.delete("/api/profile/link", authMiddleware, unlinkProfile);
 
 app.get("/api/blogs", getAllBlogs);
 

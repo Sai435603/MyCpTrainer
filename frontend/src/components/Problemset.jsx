@@ -1,6 +1,7 @@
 import "../styles/Problemset.css";
 import { useContext, useMemo, useState } from "react";
 import MainAppContext from "../contexts/MainAppContext";
+import { BASE_URL } from "../constants.js";
 
 function getDifficultyClass(p) {
   if (p.source === "leetcode") {
@@ -33,17 +34,19 @@ function getDifficultyLabel(p) {
 }
 
 function problemUrl(p) {
-  if (p.source === "leetcode" && p.titleSlug) {
-    return `https://leetcode.com/problems/${p.titleSlug}/`;
-  }
+  if (p.source === "leetcode" && p.titleSlug) return `https://leetcode.com/problems/${p.titleSlug}/`;
   if (!p.contestId || !p.index) return "#";
   return `https://codeforces.com/contest/${p.contestId}/problem/${p.index}`;
 }
 
 export default function Problemset() {
-  const { problemSet } = useContext(MainAppContext);
+  const { problemSet, setProblemSet, profileData } = useContext(MainAppContext);
   const [openInfoIdx, setOpenInfoIdx] = useState(null);
-  const [filter, setFilter] = useState("all"); // "all" | "codeforces" | "leetcode"
+  const [filter, setFilter] = useState("all");
+  const [solvingId, setSolvingId] = useState(null);
+
+  const cfLinked = profileData?.cfLinked !== false;
+  const lcLinked = !!profileData?.lcLinked;
 
   const problems = useMemo(() => {
     if (!problemSet) return [];
@@ -60,9 +63,43 @@ export default function Problemset() {
 
   const solvedCount = useMemo(() => problems.filter(p => p.isSolved).length, [problems]);
   const progressPct = problems.length > 0 ? Math.round((solvedCount / problems.length) * 100) : 0;
-
   const cfCount = problems.filter(p => (p.source || "codeforces") === "codeforces").length;
   const lcCount = problems.filter(p => p.source === "leetcode").length;
+
+  const showLinkPrompt = (filter === "codeforces" && !cfLinked) || (filter === "leetcode" && !lcLinked);
+
+  const handleMarkSolved = async (problemId) => {
+    setSolvingId(problemId);
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(`${BASE_URL}/api/problems/solve`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ problemId }),
+      });
+      if (res.ok) {
+        // Update the local state to reflect the solve
+        const updated = problems.map(p =>
+          p.problemId === problemId ? { ...p, isSolved: true } : p
+        );
+        // Update problemSet in MainApp context
+        if (Array.isArray(problemSet)) {
+          setProblemSet(updated);
+        } else if (problemSet?.problems) {
+          setProblemSet({ ...problemSet, problems: updated });
+        } else if (problemSet?.items) {
+          setProblemSet({ ...problemSet, items: updated });
+        }
+      }
+    } catch (err) {
+      console.error("Mark solved error:", err);
+    } finally {
+      setSolvingId(null);
+    }
+  };
 
   return (
     <div className="problem-set">
@@ -79,13 +116,13 @@ export default function Problemset() {
           All ({problems.length})
         </button>
         <button
-          className={`toggle-btn toggle-cf ${filter === "codeforces" ? "active" : ""}`}
+          className={`toggle-btn toggle-cf ${filter === "codeforces" ? "active" : ""} ${!cfLinked ? "disabled-tab" : ""}`}
           onClick={() => setFilter("codeforces")}
         >
           CF ({cfCount})
         </button>
         <button
-          className={`toggle-btn toggle-lc ${filter === "leetcode" ? "active" : ""}`}
+          className={`toggle-btn toggle-lc ${filter === "leetcode" ? "active" : ""} ${!lcLinked ? "disabled-tab" : ""}`}
           onClick={() => setFilter("leetcode")}
         >
           LC ({lcCount})
@@ -101,8 +138,21 @@ export default function Problemset() {
         </div>
       )}
 
+      {/* Link Prompt */}
+      {showLinkPrompt && (
+        <div className="link-prompt">
+          <span className="link-prompt-icon">🔗</span>
+          <span>
+            {filter === "leetcode"
+              ? "Link your LeetCode profile to get LC problems"
+              : "Link your Codeforces profile to get CF problems"}
+          </span>
+          <small>Go to Profile → Manage Profiles</small>
+        </div>
+      )}
+
       <ol className="problem-list" aria-live="polite">
-        {filtered.map((p, i) => {
+        {!showLinkPrompt && filtered.map((p, i) => {
           const key = p.problemId ?? `${p.contestId}-${p.index}-${i}`;
           const isOpen = openInfoIdx === i;
           const rowClassName = `problem-row ${p.isSolved ? "solved" : ""}`;
@@ -117,7 +167,6 @@ export default function Problemset() {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="problem-link"
-                title={`${p.name} — ${p.rating ?? diffLabel}`}
               >
                 <span className="problem-title">{p.name}</span>
               </a>
@@ -133,17 +182,30 @@ export default function Problemset() {
                 )}
               </div>
 
+              {/* Mark Solved Button */}
+              {!p.isSolved ? (
+                <button
+                  className="solve-btn"
+                  onClick={() => handleMarkSolved(p.problemId)}
+                  disabled={solvingId === p.problemId}
+                  title="Mark as solved"
+                >
+                  {solvingId === p.problemId ? "..." : "✓"}
+                </button>
+              ) : (
+                <span className="solved-badge" title="Solved">✓</span>
+              )}
+
               <button
                 className="info-btn"
                 aria-expanded={isOpen}
-                aria-controls={`info-box-${i}`}
                 onClick={() => setOpenInfoIdx(isOpen ? null : i)}
               >
                 {isOpen ? "Hide" : "Topics"}
               </button>
 
               {isOpen && (
-                <div id={`info-box-${i}`} className="info-box">
+                <div className="info-box">
                   <div className="info-row">
                     <strong>{source === "leetcode" ? "Difficulty:" : "Rating:"}</strong>
                     <span>{source === "leetcode" ? (p.difficulty || "N/A") : (p.rating ?? "N/A")}</span>
@@ -151,13 +213,10 @@ export default function Problemset() {
                   <div className="info-row tags-row">
                     <strong>Tags:</strong>
                     <div className="tags">
-                      {p.tags && p.tags.length > 0 ? (
-                        p.tags.map((t) => (
-                          <span key={t} className="tag">{t}</span>
-                        ))
-                      ) : (
-                        <span className="tag">none</span>
-                      )}
+                      {p.tags?.length > 0
+                        ? p.tags.map((t) => <span key={t} className="tag">{t}</span>)
+                        : <span className="tag">none</span>
+                      }
                     </div>
                   </div>
                 </div>
@@ -165,10 +224,10 @@ export default function Problemset() {
             </li>
           );
         })}
-        {filtered.length === 0 && problems.length > 0 && (
+        {!showLinkPrompt && filtered.length === 0 && problems.length > 0 && (
           <li className="empty">No {filter === "leetcode" ? "LeetCode" : "Codeforces"} problems today</li>
         )}
-        {problems.length === 0 && (
+        {problems.length === 0 && !showLinkPrompt && (
           <li className="empty">No problems available — sync your profile to get started</li>
         )}
       </ol>

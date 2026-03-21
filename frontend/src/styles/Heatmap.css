@@ -6,6 +6,7 @@
   border-radius: var(--radius-lg);
   padding: 1.5rem;
   transition: all var(--transition-slow);
+  overflow-x: auto;
 }
 
 .heatmap-wrapper:hover {
@@ -21,9 +22,25 @@
   text-align: center;
 }
 
-/* Heatmap color scale — classic green */
+/* GitHub-style heatmap: smaller cells with border-radius */
+.react-calendar-heatmap {
+  overflow: visible;
+}
+
+.react-calendar-heatmap rect.color-empty,
+.react-calendar-heatmap rect.color-scale-1,
+.react-calendar-heatmap rect.color-scale-2,
+.react-calendar-heatmap rect.color-scale-3,
+.react-calendar-heatmap rect.color-scale-4 {
+  rx: 2;
+  ry: 2;
+  stroke: var(--bg-primary);
+  stroke-width: 1;
+}
+
+/* Green color scale — GitHub style (light to dark) */
 .react-calendar-heatmap .color-empty {
-  fill: var(--bg-secondary);
+  fill: #161b22;
 }
 
 .react-calendar-heatmap .color-scale-1 {

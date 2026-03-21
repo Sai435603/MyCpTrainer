@@ -1,0 +1,228 @@
+/* ===== PROFILE MODAL ===== */
+
+.pm-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(6px);
+  z-index: 300;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.2s ease;
+}
+
+.pm-modal {
+  background: var(--bg-card);
+  border: 1px solid var(--border-violet);
+  border-radius: var(--radius-xl);
+  padding: 2rem;
+  width: 90%;
+  max-width: 440px;
+  box-shadow: var(--shadow-violet-lg);
+  animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.pm-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+
+.pm-header h3 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.pm-close {
+  width: 32px;
+  height: 32px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 50%;
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.pm-close:hover {
+  background: var(--violet-600);
+  color: #fff;
+  border-color: var(--violet-500);
+}
+
+.pm-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.pm-platform-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.pm-platform-icon {
+  width: 30px;
+  height: 30px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+.cf-icon {
+  background: rgba(59, 130, 246, 0.15);
+  color: var(--cf-color);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+.lc-icon {
+  background: rgba(245, 158, 11, 0.15);
+  color: var(--lc-color);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.pm-platform-name {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #ffffff;
+  flex: 1;
+}
+
+.pm-status {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 2px 10px;
+  border-radius: 999px;
+}
+
+.pm-status.linked {
+  color: #22c55e;
+  background: rgba(34, 197, 94, 0.1);
+  border: 1px solid rgba(34, 197, 94, 0.2);
+}
+
+.pm-status.unlinked {
+  color: var(--text-muted);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-subtle);
+}
+
+.pm-handle-display {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--bg-secondary);
+  padding: 0.6rem 1rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-subtle);
+  font-size: 0.9rem;
+  color: #ffffff;
+}
+
+.pm-unlink {
+  font-size: 0.75rem;
+  font-weight: 600;
+  background: rgba(239, 68, 68, 0.1);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  border-radius: var(--radius-sm);
+  padding: 4px 12px;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.pm-unlink:hover {
+  background: #ef4444;
+  color: #fff;
+}
+
+.pm-link-form {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.pm-input {
+  flex: 1;
+  padding: 0.6rem 1rem;
+  font-size: 0.85rem;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  color: #ffffff;
+  outline: none;
+  font-family: 'Inter', sans-serif;
+  transition: border-color var(--transition-fast);
+}
+
+.pm-input:focus {
+  border-color: var(--violet-500);
+}
+
+.pm-input::placeholder {
+  color: var(--text-muted);
+}
+
+.pm-link-btn {
+  padding: 0.6rem 1.2rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  background: var(--gradient-primary);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+
+.pm-link-btn:hover {
+  box-shadow: var(--shadow-violet);
+  transform: translateY(-1px);
+}
+
+.pm-link-btn:disabled, .pm-unlink:disabled {
+  opacity: 0.5;
+  cursor: wait;
+}
+
+.pm-divider {
+  height: 1px;
+  background: var(--border-subtle);
+  margin: 1.25rem 0;
+}
+
+.pm-error {
+  color: #f87171;
+  font-size: 0.85rem;
+  margin-top: 1rem;
+  text-align: center;
+}
+
+.pm-success {
+  color: #4ade80;
+  font-size: 0.85rem;
+  margin-top: 1rem;
+  text-align: center;
+}

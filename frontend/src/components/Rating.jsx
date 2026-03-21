@@ -20,17 +20,17 @@ const CustomTooltip = ({ active, payload }) => {
           padding: "12px 16px",
           border: "1px solid rgba(124, 58, 237, 0.3)",
           borderRadius: "12px",
-          color: "#f4f4f5",
+          color: "#ffffff",
           maxWidth: 280,
-          boxShadow: "0 8px 32px rgba(124, 58, 237, 0.2)",
+          boxShadow: "0 8px 32px rgba(0,0,0,0.4)",
         }}
       >
-        <div style={{ marginBottom: 6, fontWeight: 600, fontSize: "0.9rem" }}>
+        <div style={{ marginBottom: 6, fontWeight: 600, fontSize: "0.9rem", color: "#ffffff" }}>
           {data.contestName}
         </div>
-        <div style={{ fontSize: "0.8rem", color: "#a1a1aa" }}>Rank: {data.rank}</div>
-        <div style={{ fontSize: "0.85rem", color: "#a78bfa", fontWeight: 600 }}>Rating: {data.rating}</div>
-        <div style={{ fontSize: "0.75rem", opacity: 0.6, marginTop: 6 }}>
+        <div style={{ fontSize: "0.8rem", color: "#d4d4d8" }}>Rank: {data.rank}</div>
+        <div style={{ fontSize: "0.85rem", color: "#ffffff", fontWeight: 600 }}>Rating: {data.rating}</div>
+        <div style={{ fontSize: "0.75rem", color: "#a1a1aa", marginTop: 6 }}>
           {new Date(data.date).toLocaleDateString("en-IN", {
             year: "numeric",
             month: "short",
@@ -49,12 +49,12 @@ export default function Rating() {
 
   return (
     <section className="rating-chart" style={{ width: "100%" }}>
-      <div style={{ display: "flex", alignItems: "center", marginBottom: 8 }}>
-        <h2>Rating ({userr})</h2>
-      </div>
+      <h2 style={{ textAlign: "center", color: "#ffffff", marginBottom: "8px" }}>
+        Rating ({userr})
+      </h2>
 
       {!hasData ? (
-        <div style={{ color: "var(--text-muted)", fontStyle: "italic", padding: "2rem", textAlign: "center" }}>
+        <div style={{ color: "#a1a1aa", fontStyle: "italic", padding: "2rem", textAlign: "center" }}>
           No rating history found for this user.
         </div>
       ) : (
@@ -82,19 +82,13 @@ export default function Rating() {
                 ]}
               />
               <Tooltip content={<CustomTooltip />} />
-              <defs>
-                <linearGradient id="ratingGradient" x1="0" y1="0" x2="1" y2="0">
-                  <stop offset="0%" stopColor="#7c3aed" />
-                  <stop offset="100%" stopColor="#a855f7" />
-                </linearGradient>
-              </defs>
               <Line
                 type="monotone"
                 dataKey="rating"
-                stroke="url(#ratingGradient)"
-                strokeWidth={2.5}
-                dot={{ r: 3, fill: "#7c3aed", stroke: "#a855f7", strokeWidth: 1 }}
-                activeDot={{ r: 6, fill: "#a855f7", stroke: "#fff", strokeWidth: 2 }}
+                stroke="#ffffff"
+                strokeWidth={2}
+                dot={{ r: 3, fill: "#ffffff", stroke: "#7c3aed", strokeWidth: 1.5 }}
+                activeDot={{ r: 6, fill: "#ffffff", stroke: "#7c3aed", strokeWidth: 2 }}
               />
             </LineChart>
           </ResponsiveContainer>

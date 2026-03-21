@@ -22,6 +22,7 @@ export default function MainApp() {
   const [ratingData, setRatingData] = useState([]);
   const [heatmapData, setHeatmapData] = useState(null);
   const [isSyncing, setIsSyncing] = useState(false);
+  const [profileData, setProfileData] = useState({ cfLinked: true, lcLinked: false, cfHandle: null, lcHandle: null });
 
   const getAuthHeaders = () => {
     const token = localStorage.getItem("token");
@@ -29,13 +30,26 @@ export default function MainApp() {
     return { Authorization: `Bearer ${token}` };
   };
 
-  
+  // Fetch profile data
+  async function fetchProfile(signal) {
+    const authHeaders = getAuthHeaders();
+    if (!authHeaders) return;
+    try {
+      const res = await fetch(`${BASE_URL}/api/profile`, { headers: authHeaders, signal });
+      if (res.ok) {
+        const data = await res.json();
+        setProfileData(data);
+      }
+    } catch (err) {
+      if (err?.name !== "AbortError") console.error("fetchProfile error:", err);
+    }
+  }
+
   async function fetchAllData(userHandle, { showLoader = true, signal } = {}) {
     if (showLoader) setLoader(true);
 
     const authHeaders = getAuthHeaders();
     if (!authHeaders) {
-      console.error("No authentication token found. Cannot fetch data.");
       if (showLoader) setLoader(false);
       return;
     }
@@ -49,15 +63,7 @@ export default function MainApp() {
       ]);
 
       const getJson = async (result) => {
-        if (result?.status === "fulfilled" && result.value?.ok) {
-          return await result.value.json();
-        }
-        if (result?.status === "rejected") {
-          
-          console.error("Fetch failed:", result.reason);
-        } else if (result?.value && !result.value.ok) {
-          console.error("Fetch returned an error:", result.value.statusText);
-        }
+        if (result?.status === "fulfilled" && result.value?.ok) return await result.value.json();
         return null;
       };
 
@@ -68,15 +74,23 @@ export default function MainApp() {
         getJson(responses[3]),
       ]);
 
-      if (problems) setProblemSet(problems);
+      if (problems) {
+        setProblemSet(problems);
+        // Update profile linked status from problems response
+        if (typeof problems.cfLinked !== "undefined") {
+          setProfileData(prev => ({
+            ...prev,
+            cfLinked: problems.cfLinked,
+            lcLinked: problems.lcLinked,
+          }));
+        }
+      }
       if (rating) setRatingData(rating);
       if (streak) setStreak(streak?.streak ?? 0);
       if (heatmapResponse?.success) setHeatmapData(heatmapResponse.heatmap);
     } catch (error) {
-      if (error?.name === "AbortError") {
-        console.log("fetchAllData aborted");
-      } else {
-        console.error("A critical error occurred in fetchAllData:", error);
+      if (error?.name !== "AbortError") {
+        console.error("fetchAllData error:", error);
         setWord("Failed to load your data.");
       }
     } finally {
@@ -86,13 +100,8 @@ export default function MainApp() {
 
   async function handleSync() {
     setIsSyncing(true);
-
     const authHeaders = getAuthHeaders();
-    if (!authHeaders) {
-      console.error("No authentication token found. Cannot sync profile.");
-      setIsSyncing(false);
-      return;
-    }
+    if (!authHeaders) { setIsSyncing(false); return; }
 
     try {
       const res = await fetch(`${BASE_URL}/api/sync-profile/${userr}`, {
@@ -100,8 +109,6 @@ export default function MainApp() {
         headers: authHeaders,
       });
       if (!res.ok) throw new Error("Failed to sync profile.");
-
-      // After sync completes, refetch ALL data for full consistency
       await fetchAllData(userr, { showLoader: false });
     } catch (error) {
       console.error("Error during profile sync:", error);
@@ -111,24 +118,20 @@ export default function MainApp() {
   }
 
   useEffect(() => {
-    // fetch on mount and when user changes — DO NOT depend on router navigation
     if (userr !== "guest") {
       const controller = new AbortController();
-
-      // IIFE so we can await and then mark initialLoad false after first fetch
       (async () => {
-        await fetchAllData(userr, { showLoader: initialLoad, signal: controller.signal });
-        // After the first attempt, don't show the global loader on background refreshes
+        await Promise.all([
+          fetchAllData(userr, { showLoader: initialLoad, signal: controller.signal }),
+          fetchProfile(controller.signal),
+        ]);
         if (initialLoad) setInitialLoad(false);
       })();
-
       return () => controller.abort();
     } else {
-      // no logged-in user -> disable loader
       setLoader(false);
       if (initialLoad) setInitialLoad(false);
     }
-    // only depend on userr (not navigation)
   }, [userr]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (loader) return <CptrainerLoader word={word} />;
@@ -136,48 +139,17 @@ export default function MainApp() {
   return (
     <MainAppContext.Provider
       value={{
-        problemSet,
-        ratingData,
-        heatmapData,
-        userr,
-        handleSync,
-        isSyncing,
+        problemSet, setProblemSet, ratingData, heatmapData, userr,
+        handleSync, isSyncing,
+        profileData, setProfileData,
       }}
     >
       <Nav />
       <Routes>
-        <Route
-          path="/"
-          element={
-            <Layout>
-              <Dashboard />
-            </Layout>
-          }
-        />
-        <Route
-          path="/contests"
-          element={
-            <Layout>
-              <Contests />
-            </Layout>
-          }
-        />
-        <Route
-          path="/analytics"
-          element={
-            <Layout>
-              <Analytics />
-            </Layout>
-          }
-        />
-        <Route
-          path="/blogs"
-          element={
-            <Layout>
-              <Blogs />
-            </Layout>
-          }
-        />
+        <Route path="/" element={<Layout><Dashboard /></Layout>} />
+        <Route path="/contests" element={<Layout><Contests /></Layout>} />
+        <Route path="/analytics" element={<Layout><Analytics /></Layout>} />
+        <Route path="/blogs" element={<Layout><Blogs /></Layout>} />
       </Routes>
     </MainAppContext.Provider>
   );

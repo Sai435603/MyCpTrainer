@@ -43,10 +43,10 @@ export default function Heatmap() {
         values={values}
         classForValue={(value) => {
           if (!value || value.count === 0) return "color-empty";
-          if (value.count === 1) return "color-scale-4";
-          if (value.count === 2) return "color-scale-3";
-          if (value.count === 3) return "color-scale-2";
-          return "color-scale-1";
+          if (value.count === 1) return "color-scale-1";
+          if (value.count === 2) return "color-scale-2";
+          if (value.count === 3) return "color-scale-3";
+          return "color-scale-4";
         }}
         tooltipDataAttrs={(value) => {
           if (!value || !value.date) return null;

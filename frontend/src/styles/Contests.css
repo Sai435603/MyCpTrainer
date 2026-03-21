@@ -11,10 +11,7 @@
   font-size: 1.5rem;
   font-weight: 800;
   margin-bottom: 1.5rem;
-  background: var(--gradient-primary);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: #ffffff;
 }
 
 .contest-list {
@@ -48,9 +45,10 @@
   height: 44px;
   border-radius: var(--radius-sm);
   object-fit: contain;
-  background: var(--bg-secondary);
-  padding: 6px;
+  background: #ffffff;
+  padding: 4px;
   flex-shrink: 0;
+  border: 1px solid var(--border-subtle);
 }
 
 .contest-details {

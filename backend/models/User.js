@@ -10,7 +10,9 @@ const DailyProblemItem = new Schema({
   difficulty: String,
   isSolved: { type: Boolean, default: false },
   tags: [String],
-  source: { type: String, enum: ["codeforces", "leetcode"], default: "codeforces" }
+  source: { type: String, enum: ["codeforces", "leetcode"], default: "codeforces" },
+  titleSlug: String,
+  frontendId: Number,
 }, { _id: false });
 
 const DailyProblemsSchema = new Schema({
@@ -24,7 +26,16 @@ const UserSchema = new Schema({
   passwordHash: { type: String, required: true },
   rating: { type: Number, default: 800, index: true },
   dailyProblems: { type: DailyProblemsSchema, default: () => ({ items: [], generatedAt: null }) },
-  streak: { type: Number, default: 0, index: true }
+  streak: { type: Number, default: 0, index: true },
+
+  // Profile linking
+  cfHandle: { type: String, default: null },
+  lcHandle: { type: String, default: null },
+  cfLinked: { type: Boolean, default: true },
+  lcLinked: { type: Boolean, default: false },
+
+  // Anti-repeat: track recently suggested problem IDs
+  recentlySuggested: { type: [String], default: [] },
 
 }, { timestamps: true });
 
