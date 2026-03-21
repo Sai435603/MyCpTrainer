@@ -62,6 +62,9 @@ export async function linkProfile(req, res) {
       return res.status(400).json({ message: "platform must be 'leetcode' or 'codeforces'." });
     }
 
+    // Clear daily problems so they regenerate with the new platform's problems
+    update["dailyProblems.generatedAt"] = null;
+
     const user = await User.findByIdAndUpdate(req.user.id, { $set: update }, { new: true })
       .select("handle cfHandle lcHandle cfLinked lcLinked")
       .lean();
@@ -100,6 +103,9 @@ export async function unlinkProfile(req, res) {
     } else {
       return res.status(400).json({ message: "platform must be 'leetcode' or 'codeforces'." });
     }
+
+    // Clear daily problems so they regenerate without this platform's problems
+    update["dailyProblems.generatedAt"] = null;
 
     await User.findByIdAndUpdate(req.user.id, { $set: update });
 

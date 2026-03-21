@@ -103,6 +103,34 @@ export default function ProfileModal({ profile, onClose, onUpdate }) {
           )}
         </div>
 
+        <div className="pm-divider" />
+
+        {/* Reset Heatmap */}
+        <div className="pm-section">
+          <div className="pm-platform-row">
+            <span className="pm-platform-name" style={{ fontSize: "0.85rem" }}>Heatmap tracks app solves only</span>
+          </div>
+          <button
+            className="pm-unlink"
+            style={{ alignSelf: "flex-start" }}
+            onClick={async () => {
+              setLoading(true); setError(null); setSuccess(null);
+              try {
+                const res = await fetch(`${BASE_URL}/api/heatmap/reset`, {
+                  method: "POST",
+                  headers: getAuthHeaders(),
+                });
+                if (!res.ok) throw new Error("Failed to reset.");
+                setSuccess("Heatmap reset! It now tracks only app-level solves.");
+              } catch (err) { setError(err.message); }
+              finally { setLoading(false); }
+            }}
+            disabled={loading}
+          >
+            {loading ? "..." : "Reset Heatmap Data"}
+          </button>
+        </div>
+
         {error && <div className="pm-error">{error}</div>}
         {success && <div className="pm-success">{success}</div>}
       </div>

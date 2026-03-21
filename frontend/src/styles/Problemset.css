@@ -375,46 +375,34 @@ ol {
   opacity: 0.5;
 }
 
-/* Solve Button */
-.solve-btn {
-  width: 28px;
-  height: 28px;
+/* Solved/Unsolved indicators */
+.unsolved-dot {
+  width: 12px;
+  height: 12px;
   border-radius: 50%;
   border: 2px solid var(--border-default);
-  background: transparent;
-  color: var(--text-muted);
-  font-size: 0.8rem;
-  font-weight: 700;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all var(--transition-fast);
   flex-shrink: 0;
-}
-
-.solve-btn:hover {
-  border-color: #22c55e;
-  color: #22c55e;
-  background: rgba(34, 197, 94, 0.1);
-}
-
-.solve-btn:disabled {
-  opacity: 0.5;
-  cursor: wait;
 }
 
 .solved-badge {
-  width: 28px;
-  height: 28px;
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
   background: rgba(34, 197, 94, 0.15);
   color: #22c55e;
-  font-size: 0.8rem;
+  font-size: 0.7rem;
   font-weight: 700;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  border: 2px solid rgba(34, 197, 94, 0.3);
+  border: 1.5px solid rgba(34, 197, 94, 0.3);
+}
+
+.sync-hint {
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 0.5rem;
+  padding: 0;
 }

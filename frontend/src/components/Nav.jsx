@@ -123,6 +123,8 @@ export default function Nav() {
           onClose={() => setShowProfileModal(false)}
           onUpdate={(data) => {
             setProfileData(prev => ({ ...prev, ...data }));
+            // Refetch problems since linked platforms changed
+            setTimeout(() => handleSync(), 500);
           }}
         />
       )}

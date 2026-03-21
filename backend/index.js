@@ -2,6 +2,7 @@ import fetchUpcomingcontests from "./modules/fetchUpcomingcontests.js";
 import dailyProblems from "./controllers/dailyProblems.js";
 import fetchRating from "./controllers/fetchRating.js";
 import fetchHeatmap from "./controllers/fetchHeatmap.js";
+import { resetHeatmap } from "./controllers/fetchHeatmap.js";
 import setUpDatabase from "./utils/setUpDatabase.js";
 import initializeProblemSet from "./utils/initializeProblemSet.js";
 import initializeLeetcode from "./utils/initializeLeetcode.js";
@@ -82,6 +83,7 @@ app.post("/api/problems/solve", authMiddleware, solveProblem);
 app.get("/api/rating/:user", authMiddleware, fetchRating);
 
 app.get("/api/heatmap/:user", authMiddleware, fetchHeatmap);
+app.post("/api/heatmap/reset", authMiddleware, resetHeatmap);
 
 app.get("/api/analytics/:user", authMiddleware, fetchAnalytics);
 

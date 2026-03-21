@@ -1,7 +1,6 @@
 import "../styles/Problemset.css";
 import { useContext, useMemo, useState } from "react";
 import MainAppContext from "../contexts/MainAppContext";
-import { BASE_URL } from "../constants.js";
 
 function getDifficultyClass(p) {
   if (p.source === "leetcode") {
@@ -40,10 +39,9 @@ function problemUrl(p) {
 }
 
 export default function Problemset() {
-  const { problemSet, setProblemSet, profileData } = useContext(MainAppContext);
+  const { problemSet, profileData } = useContext(MainAppContext);
   const [openInfoIdx, setOpenInfoIdx] = useState(null);
   const [filter, setFilter] = useState("all");
-  const [solvingId, setSolvingId] = useState(null);
 
   const cfLinked = profileData?.cfLinked !== false;
   const lcLinked = !!profileData?.lcLinked;
@@ -67,39 +65,6 @@ export default function Problemset() {
   const lcCount = problems.filter(p => p.source === "leetcode").length;
 
   const showLinkPrompt = (filter === "codeforces" && !cfLinked) || (filter === "leetcode" && !lcLinked);
-
-  const handleMarkSolved = async (problemId) => {
-    setSolvingId(problemId);
-    try {
-      const token = localStorage.getItem("token");
-      const res = await fetch(`${BASE_URL}/api/problems/solve`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ problemId }),
-      });
-      if (res.ok) {
-        // Update the local state to reflect the solve
-        const updated = problems.map(p =>
-          p.problemId === problemId ? { ...p, isSolved: true } : p
-        );
-        // Update problemSet in MainApp context
-        if (Array.isArray(problemSet)) {
-          setProblemSet(updated);
-        } else if (problemSet?.problems) {
-          setProblemSet({ ...problemSet, problems: updated });
-        } else if (problemSet?.items) {
-          setProblemSet({ ...problemSet, items: updated });
-        }
-      }
-    } catch (err) {
-      console.error("Mark solved error:", err);
-    } finally {
-      setSolvingId(null);
-    }
-  };
 
   return (
     <div className="problem-set">
@@ -162,6 +127,13 @@ export default function Problemset() {
 
           return (
             <li key={key} className={rowClassName}>
+              {/* Solved indicator */}
+              {p.isSolved ? (
+                <span className="solved-badge" title="Solved on platform">✓</span>
+              ) : (
+                <span className="unsolved-dot" title="Not solved yet" />
+              )}
+
               <a
                 href={problemUrl(p)}
                 target="_blank"
@@ -181,20 +153,6 @@ export default function Problemset() {
                   </span>
                 )}
               </div>
-
-              {/* Mark Solved Button */}
-              {!p.isSolved ? (
-                <button
-                  className="solve-btn"
-                  onClick={() => handleMarkSolved(p.problemId)}
-                  disabled={solvingId === p.problemId}
-                  title="Mark as solved"
-                >
-                  {solvingId === p.problemId ? "..." : "✓"}
-                </button>
-              ) : (
-                <span className="solved-badge" title="Solved">✓</span>
-              )}
 
               <button
                 className="info-btn"
@@ -228,9 +186,13 @@ export default function Problemset() {
           <li className="empty">No {filter === "leetcode" ? "LeetCode" : "Codeforces"} problems today</li>
         )}
         {problems.length === 0 && !showLinkPrompt && (
-          <li className="empty">No problems available — sync your profile to get started</li>
+          <li className="empty">Sync your profile to detect solved problems</li>
         )}
       </ol>
+
+      {problems.length > 0 && (
+        <p className="sync-hint">Solve problems on CF/LC, then click <strong>Sync Profile</strong> to auto-detect</p>
+      )}
     </div>
   );
 }
