@@ -1,34 +1,28 @@
 import React from "react";
 import "../styles/CptrainerLoader.css";
 
-export default function CptrainerLoader({ word = "CPTRAINER", className = "" }) {
-  const letters = Array.from(word.toUpperCase());
-
+export default function CptrainerLoader({ word = "CP TRAINER" }) {
   return (
-    <main
-      role="status"
-      aria-live="polite"
-      aria-label={`Loading ${word.toUpperCase()}`}
-      className={`cptrainer-root ${className}`}
-    >
-      <div className="cptrainer-letters">
-        {letters.map((ch, idx) => (
-          <span
-            key={`${ch}-${idx}`}
-            className="cptrainer-letter"
-            style={{ animationDelay: `${idx * 120}ms` }}
-            aria-hidden="true"
-          >
-            {ch}
-          </span>
-        ))}
+    <main role="status" aria-live="polite" className="loader-root">
+      {/* Animated rings */}
+      <div className="loader-rings">
+        <div className="ring ring-1" />
+        <div className="ring ring-2" />
+        <div className="ring ring-3" />
+        <div className="loader-core">
+          <span className="loader-icon">⚡</span>
+        </div>
       </div>
 
-      <div className="cptrainer-bar-outer" aria-hidden="true">
-        <div className="cptrainer-bar-inner" />
-      </div>
+      <h1 className="loader-title">{word}</h1>
+      <p className="loader-subtitle">Preparing your training session</p>
 
-      <p className="sr-only">Loading, please wait…</p>
+      {/* Dot pulse */}
+      <div className="loader-dots">
+        <span className="dot" />
+        <span className="dot" />
+        <span className="dot" />
+      </div>
     </main>
   );
 }
