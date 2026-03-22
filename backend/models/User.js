@@ -23,10 +23,16 @@ const DailyProblemsSchema = new Schema({
 const UserSchema = new Schema({
 
   handle: { type: String, required: true, unique: true, index: true },
-  passwordHash: { type: String, required: true },
+  passwordHash: { type: String, default: null },
   rating: { type: Number, default: 800, index: true },
   dailyProblems: { type: DailyProblemsSchema, default: () => ({ items: [], generatedAt: null }) },
   streak: { type: Number, default: 0, index: true },
+
+  // OAuth
+  authProvider: { type: String, enum: ["local", "google", "github", "twitter"], default: "local" },
+  oauthId: { type: String, default: null },
+  email: { type: String, default: null },
+  avatar: { type: String, default: null },
 
   // Profile linking
   cfHandle: { type: String, default: null },
@@ -43,5 +49,6 @@ const UserSchema = new Schema({
 }, { timestamps: true });
 
 UserSchema.index({ rating: -1 });
+UserSchema.index({ authProvider: 1, oauthId: 1 });
 const User = mongoose.model('User', UserSchema);
 export default User;

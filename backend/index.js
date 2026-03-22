@@ -28,14 +28,38 @@ import cron from "node-cron";
 import express, { json } from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
+import session from "express-session";
+import passport from "passport";
+import configurePassport from "./config/passport.js";
+import authRoutes from "./routes/authRoutes.js";
 import dotenv from "dotenv";
 dotenv.config();
+
+// Configure Passport strategies
+configurePassport();
+
 const app = express();
 const port = process.env.PORT || 3000;
 
 app.use(json());
-app.use(cors({ origin: FRONTEND_URL }));
+app.use(cors({ origin: FRONTEND_URL, credentials: true }));
 app.use(cookieParser());
+
+// Session middleware (needed for Twitter OAuth handshake)
+app.use(
+  session({
+    secret: process.env.JWT_SECRET || "cptrainer-session-secret",
+    resave: false,
+    saveUninitialized: false,
+    cookie: { secure: false, maxAge: 5 * 60 * 1000 }, // 5 min — only used during OAuth flow
+  })
+);
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+// OAuth routes
+app.use(authRoutes);
 
 try {
   await setUpDatabase();

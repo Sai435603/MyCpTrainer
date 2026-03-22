@@ -3,7 +3,8 @@ import { useState, useEffect } from "react";
 import MainApp from "./components/MainApp.jsx";
 import LoginContext from "./contexts/LoginContext.jsx";
 import Login from "./components/Login.jsx";
-import { BrowserRouter as Router } from "react-router-dom";
+import OAuthCallback from "./components/OAuthCallback.jsx";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import LoadingSpinner from "./loaders/CptrainerLoader.jsx";
 import { BASE_URL } from "./constants.js";
 
@@ -98,7 +99,12 @@ export default function App() {
         setStreak,
       }}
     >
-      <Router>{isAuthenticated ? <MainApp /> : <Login />}</Router>
+      <Router>
+        <Routes>
+          <Route path="/auth/callback" element={<OAuthCallback />} />
+          <Route path="/*" element={isAuthenticated ? <MainApp /> : <Login />} />
+        </Routes>
+      </Router>
     </LoginContext.Provider>
   );
 }
