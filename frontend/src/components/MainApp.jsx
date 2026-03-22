@@ -40,7 +40,8 @@ export default function MainApp() {
       const res = await fetch(`${BASE_URL}/api/profile`, { headers: authHeaders, signal });
       if (res.ok) {
         const data = await res.json();
-        setProfileData(data);
+        // Merge instead of replace to avoid race conditions with fetchAllData
+        setProfileData(prev => ({ ...prev, ...data }));
       }
     } catch (err) {
       if (err?.name !== "AbortError") console.error("fetchProfile error:", err);
@@ -76,7 +77,7 @@ export default function MainApp() {
 
       if (problems) {
         setProblemSet(problems);
-        // Update profile linked status + handles from problems response
+        // Update profile linked status from problems response
         if (typeof problems.cfLinked !== "undefined") {
           setProfileData(prev => ({
             ...prev,
@@ -102,18 +103,24 @@ export default function MainApp() {
     const authHeaders = getAuthHeaders();
     if (!authHeaders) { setIsSyncing(false); return; }
 
+    // Step 1: Try to sync (don't fail if this errors)
     try {
-      const res = await fetch(`${BASE_URL}/api/sync-profile/${userr}`, {
+      await fetch(`${BASE_URL}/api/sync-profile/${userr}`, {
         method: "GET",
         headers: authHeaders,
       });
-      if (!res.ok) throw new Error("Failed to sync profile.");
+    } catch (err) {
+      console.warn("Sync-profile call failed:", err.message);
+    }
+
+    // Step 2: ALWAYS refetch data regardless of sync result
+    try {
       await Promise.all([
         fetchAllData(userr, { showLoader: false }),
         fetchProfile(),
       ]);
     } catch (error) {
-      console.error("Error during profile sync:", error);
+      console.error("Error refetching data after sync:", error);
     } finally {
       setIsSyncing(false);
     }
