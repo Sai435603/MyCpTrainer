@@ -39,6 +39,7 @@ dotenv.config();
 configurePassport();
 
 const app = express();
+app.set("trust proxy", 1); // Trust Render / Vercel reverse proxy (ensures HTTPS callback URLs)
 const port = process.env.PORT || 3000;
 
 app.use(json());
