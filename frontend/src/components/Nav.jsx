@@ -1,5 +1,5 @@
 import "../styles/Nav.css";
-import { FaFire, FaUserCircle, FaChevronDown, FaLink, FaSignOutAlt, FaSync } from "react-icons/fa";
+import { FaFire, FaUserCircle, FaChevronDown, FaLink, FaSignOutAlt, FaSync, FaBars, FaTimes } from "react-icons/fa";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useContext, useState, useRef, useEffect } from "react";
 import LoginContext from "../contexts/LoginContext.jsx";
@@ -13,6 +13,7 @@ export default function Nav() {
   const [showDropdown, setShowDropdown] = useState(false);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const [showProfileModal, setShowProfileModal] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const dropdownRef = useRef(null);
 
   // Close dropdown on outside click
@@ -38,28 +39,39 @@ export default function Nav() {
       <nav className="navbar" role="navigation" aria-label="Main navigation">
         <div className="navbarlogo">CP TRAINER</div>
 
-        <ul className="navbarlinks">
-          <li><NavLink to="/" end>PROBLEMS</NavLink></li>
-          <li><NavLink to="/contests">CONTESTS</NavLink></li>
-          <li><NavLink to="/analytics">ANALYTICS</NavLink></li>
-          <li><NavLink to="/friends">FRIENDS</NavLink></li>
-          <li><NavLink to="/blogs">BLOGS</NavLink></li>
-        </ul>
-
-        <div className="navbarstreak" title={`${streak} day streak`}>
-          <FaFire className="streak-icon" />
-          <span className="streak-count">{streak} days</span>
-        </div>
-
         <button
           type="button"
-          className="navbarlogin"
-          onClick={() => handleSync()}
-          disabled={isSyncing}
+          className="hamburger-btn"
+          onClick={() => setMenuOpen(prev => !prev)}
+          aria-label="Toggle navigation menu"
         >
-          <FaSync size={12} className={isSyncing ? "spin-icon" : ""} style={{ marginRight: 6 }} />
-          {isSyncing ? "Syncing…" : "Sync"}
+          {menuOpen ? <FaTimes size={20} /> : <FaBars size={20} />}
         </button>
+
+        <div className={`nav-menu ${menuOpen ? "open" : ""}`}>
+          <ul className="navbarlinks">
+            <li><NavLink to="/" end onClick={() => setMenuOpen(false)}>PROBLEMS</NavLink></li>
+            <li><NavLink to="/contests" onClick={() => setMenuOpen(false)}>CONTESTS</NavLink></li>
+            <li><NavLink to="/analytics" onClick={() => setMenuOpen(false)}>ANALYTICS</NavLink></li>
+            <li><NavLink to="/friends" onClick={() => setMenuOpen(false)}>FRIENDS</NavLink></li>
+            <li><NavLink to="/blogs" onClick={() => setMenuOpen(false)}>BLOGS</NavLink></li>
+          </ul>
+
+          <div className="navbarstreak" title={`${streak} day streak`}>
+            <FaFire className="streak-icon" />
+            <span className="streak-count">{streak} days</span>
+          </div>
+
+          <button
+            type="button"
+            className="navbarlogin"
+            onClick={() => handleSync()}
+            disabled={isSyncing}
+          >
+            <FaSync size={12} className={isSyncing ? "spin-icon" : ""} style={{ marginRight: 6 }} />
+            {isSyncing ? "Syncing…" : "Sync"}
+          </button>
+        </div>
 
         {/* Profile Dropdown */}
         <div className="profile-dropdown-wrapper" ref={dropdownRef}>

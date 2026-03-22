@@ -336,13 +336,37 @@ ol {
 @media (max-width: 520px) {
   .problem-set {
     padding: 1rem;
-    min-width: 300px;
+    min-width: unset;
   }
   .problem-row {
     min-height: 44px;
     padding: 0 0.75rem;
   }
   .problem-badges {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .problem-set {
+    padding: 0.75rem;
+    border-radius: var(--radius-md);
+  }
+  .problem-title {
+    font-size: 0.82rem;
+  }
+  .info-box {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    right: auto;
+    bottom: auto;
+    transform: translate(-50%, -50%);
+    width: 90vw;
+    max-width: 320px;
+    z-index: 50;
+  }
+  .info-box::after {
     display: none;
   }
 }

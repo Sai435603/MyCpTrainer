@@ -73,3 +73,12 @@
   font-size: 0.8rem !important;
   box-shadow: var(--shadow-violet) !important;
 }
+
+@media (max-width: 480px) {
+  .heatmap-wrapper {
+    padding: 1rem 0.75rem;
+  }
+  .heatmap-wrapper .title {
+    font-size: 0.95rem;
+  }
+}

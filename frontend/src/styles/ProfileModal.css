@@ -226,3 +226,20 @@
   margin-top: 1rem;
   text-align: center;
 }
+
+@media (max-width: 480px) {
+  .pm-modal {
+    padding: 1.5rem;
+    border-radius: var(--radius-lg);
+  }
+  .pm-link-form {
+    flex-direction: column;
+  }
+  .pm-link-btn {
+    width: 100%;
+    text-align: center;
+  }
+  .pm-platform-row {
+    flex-wrap: wrap;
+  }
+}

@@ -525,3 +525,33 @@
     flex: 1;
   }
 }
+
+@media (max-width: 480px) {
+  .feed-container {
+    padding: 4rem 0.75rem 1.5rem 0.75rem;
+  }
+  .blog-page-title {
+    font-size: 1.2rem;
+  }
+  .feed-item {
+    padding: 1rem;
+  }
+  .feed-left {
+    display: none;
+  }
+  .feed-link {
+    font-size: 0.88rem;
+  }
+  .modal {
+    padding: 1.5rem;
+    border-radius: var(--radius-lg);
+  }
+  .top-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .create-button {
+    width: 100%;
+    text-align: center;
+  }
+}

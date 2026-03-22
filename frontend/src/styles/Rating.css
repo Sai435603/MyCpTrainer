@@ -156,3 +156,16 @@
 @keyframes spin-rating {
   to { transform: rotate(360deg); }
 }
+
+@media (max-width: 480px) {
+  .rating-chart {
+    padding: 1rem;
+  }
+  .rating-header h2 {
+    font-size: 0.95rem;
+  }
+  .rating-toggle-btn {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.7rem;
+  }
+}
