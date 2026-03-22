@@ -69,11 +69,14 @@ export default function Login() {
     e.preventDefault();
     if (formType === "signin") {
       handleSignIn();
+    } else if (isResetMode) {
+      handlePasswordReset();
     } else {
-      handleSignUpAndReset();
+      handleSignUp();
     }
   };
 
+  // ── Sign In ──
   const handleSignIn = async () => {
     setLoading(true);
     setError(null);
@@ -106,23 +109,58 @@ export default function Login() {
     }
   };
 
-  const handleSignUpAndReset = async () => {
+  // ── Simple Sign Up (no CF challenge) ──
+  const handleSignUp = async () => {
     setError(null);
     setSuccess(null);
 
     if (password !== confirmPassword) {
-      return setError(
-        isResetMode ? "New passwords do not match." : "Passwords do not match."
-      );
+      return setError("Passwords do not match.");
+    }
+    if (password.trim().length < 6) {
+      return setError("Password must be at least 6 characters long.");
+    }
+    if (!username.trim()) {
+      return setError("Please enter a username.");
     }
 
+    setLoading(true);
+    try {
+      const res = await fetch(`${BASE_URL}/api/signup`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ handle: username.trim(), password }),
+      });
+
+      if (!res.ok) throw new Error(await parseResponseError(res));
+
+      const data = await res.json();
+      localStorage.setItem("token", data.token);
+
+      setSuccess(data.message || "Account created!");
+      setUser(data.handle);
+      setIsAuthenticated(true);
+    } catch (err) {
+      setError(err.message || "Failed to create account.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ── Password Reset (still uses CF challenge) ──
+  const handlePasswordReset = async () => {
+    setError(null);
+    setSuccess(null);
+
+    if (password !== confirmPassword) {
+      return setError("New passwords do not match.");
+    }
     if (password.trim().length < 6) {
       return setError("Password must be at least 6 characters long.");
     }
 
     if (!timing) {
-      if (!username.trim())
-        return setError("Please enter a Codeforces handle.");
+      if (!username.trim()) return setError("Please enter your username.");
       setLoading(true);
       try {
         const res = await fetch(
@@ -148,7 +186,7 @@ export default function Login() {
           password,
           questionUrl,
           elapsedSeconds,
-          isReset: isResetMode,
+          isReset: true,
         };
         const verifyRes = await fetch(`${BASE_URL}/api/signup`, {
           method: "POST",
@@ -160,8 +198,7 @@ export default function Login() {
         const verifyData = await verifyRes.json();
         localStorage.setItem("token", verifyData.token);
 
-        const action = isResetMode ? "Password Reset" : "Account Creation";
-        setSuccess(`${action} successful!`);
+        setSuccess("Password Reset successful!");
         setUser(username.trim());
         setIsAuthenticated(true);
       } catch (err) {
@@ -244,45 +281,83 @@ export default function Login() {
           </form>
         )}
 
-        {formType === "signup" && (
+        {formType === "signup" && !isResetMode && (
           <form className="login-form" onSubmit={handleSubmit}>
             <div className="form-group">
-              <label>{isResetMode ? "Username" : "Codeforces Handle"}</label>
+              <label>Username</label>
+              <input
+                type="text"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                required
+                disabled={loading}
+                placeholder="Choose a username"
+              />
+            </div>
+            <div className="form-group">
+              <label>Password</label>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                disabled={loading}
+                placeholder="Create a password"
+              />
+            </div>
+            <div className="form-group">
+              <label>Confirm Password</label>
+              <input
+                type="password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                required
+                disabled={loading}
+                placeholder="Confirm your password"
+              />
+            </div>
+            <button type="submit" className="login-button" disabled={loading}>
+              {loading ? "Creating Account..." : "Sign Up"}
+            </button>
+            <p style={{ color: "var(--text-muted)", fontSize: "0.75rem", textAlign: "center", marginTop: "0.75rem" }}>
+              Link your Codeforces / LeetCode profiles after signing up
+            </p>
+          </form>
+        )}
+
+        {formType === "signup" && isResetMode && (
+          <form className="login-form" onSubmit={handleSubmit}>
+            <div className="form-group">
+              <label>Username</label>
               <input
                 type="text"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 required
                 disabled={isBusy || timing}
-                placeholder={
-                  isResetMode
-                    ? "Your account username"
-                    : "Your Codeforces handle"
-                }
+                placeholder="Your account username"
               />
             </div>
             <div className="form-group">
-              <label>{isResetMode ? "New Password" : "Password"}</label>
+              <label>New Password</label>
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 disabled={isBusy}
-                placeholder="Enter a password"
+                placeholder="Enter a new password"
               />
             </div>
             <div className="form-group">
-              <label>
-                {isResetMode ? "Confirm New Password" : "Confirm Password"}
-              </label>
+              <label>Confirm New Password</label>
               <input
                 type="password"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
                 disabled={isBusy}
-                placeholder="Confirm your password"
+                placeholder="Confirm your new password"
               />
             </div>
             <button
@@ -296,14 +371,15 @@ export default function Login() {
                 ? "Verifying..."
                 : timing
                 ? "Verify & Submit"
-                : isResetMode
-                ? "Start Reset Process"
-                : "Sign Up"}
+                : "Start Reset Process"}
             </button>
+            <p style={{ color: "var(--text-muted)", fontSize: "0.75rem", textAlign: "center", marginTop: "0.75rem" }}>
+              Requires a linked Codeforces profile for identity verification
+            </p>
           </form>
         )}
 
-        {formType === "signup" && timing && (
+        {isResetMode && timing && (
           <div>
             <div className="progress-wrap">
               <div className="progress-info">
@@ -324,7 +400,7 @@ export default function Login() {
               <u>
                 <a
                   href={questionUrl}
-                  rerel="noopener noreferrer"
+                  rel="noopener noreferrer"
                   target="_blank"
                 >
                   {questionUrl}

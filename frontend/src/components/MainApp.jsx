@@ -8,6 +8,7 @@ import Dashboard from "./Dashboard.jsx";
 import Contests from "./Contests.jsx";
 import Analytics from "./Analytics.jsx";
 import Blogs from "./Blogs.jsx";
+import Friends from "./Friends.jsx";
 import Layout from "./Layout.jsx";
 import { BASE_URL } from "../constants.js";
 
@@ -20,9 +21,10 @@ export default function MainApp() {
   const [word, setWord] = useState("Loading your problemset...");
   const [problemSet, setProblemSet] = useState([]);
   const [ratingData, setRatingData] = useState([]);
+  const [lcRatingData, setLcRatingData] = useState([]);
   const [heatmapData, setHeatmapData] = useState(null);
   const [isSyncing, setIsSyncing] = useState(false);
-  const [profileData, setProfileData] = useState({ cfLinked: true, lcLinked: false, cfHandle: null, lcHandle: null });
+  const [profileData, setProfileData] = useState({ cfLinked: false, lcLinked: false, cfHandle: null, lcHandle: null });
 
   const getAuthHeaders = () => {
     const token = localStorage.getItem("token");
@@ -57,7 +59,6 @@ export default function MainApp() {
     try {
       const responses = await Promise.allSettled([
         fetch(`${BASE_URL}/api/problems/${userHandle}`, { headers: authHeaders, signal }),
-        fetch(`${BASE_URL}/api/rating/${userHandle}`, { headers: authHeaders, signal }),
         fetch(`${BASE_URL}/api/heatmap/${userHandle}`, { headers: authHeaders, signal }),
         fetch(`${BASE_URL}/api/streak/${userHandle}`, { headers: authHeaders, signal }),
       ]);
@@ -67,11 +68,10 @@ export default function MainApp() {
         return null;
       };
 
-      const [problems, rating, heatmapResponse, streak] = await Promise.all([
+      const [problems, heatmapResponse, streak] = await Promise.all([
         getJson(responses[0]),
         getJson(responses[1]),
         getJson(responses[2]),
-        getJson(responses[3]),
       ]);
 
       if (problems) {
@@ -85,7 +85,6 @@ export default function MainApp() {
           }));
         }
       }
-      if (rating) setRatingData(rating);
       if (streak) setStreak(streak?.streak ?? 0);
       if (heatmapResponse?.success) setHeatmapData(heatmapResponse.heatmap);
     } catch (error) {
@@ -139,9 +138,10 @@ export default function MainApp() {
   return (
     <MainAppContext.Provider
       value={{
-        problemSet, setProblemSet, ratingData, heatmapData, userr,
+        problemSet, setProblemSet, ratingData, lcRatingData, heatmapData, userr,
         handleSync, isSyncing,
         profileData, setProfileData,
+        setRatingData, setLcRatingData,
       }}
     >
       <Nav />
@@ -149,6 +149,7 @@ export default function MainApp() {
         <Route path="/" element={<Layout><Dashboard /></Layout>} />
         <Route path="/contests" element={<Layout><Contests /></Layout>} />
         <Route path="/analytics" element={<Layout><Analytics /></Layout>} />
+        <Route path="/friends" element={<Layout><Friends /></Layout>} />
         <Route path="/blogs" element={<Layout><Blogs /></Layout>} />
       </Routes>
     </MainAppContext.Provider>

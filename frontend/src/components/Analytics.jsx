@@ -151,10 +151,12 @@ export default function Analytics() {
                     contentStyle={{
                       backgroundColor: "#16161e",
                       borderColor: "rgba(124, 58, 237, 0.3)",
-                      color: "#f4f4f5",
                       borderRadius: "12px",
                       boxShadow: "0 8px 32px rgba(124, 58, 237, 0.2)",
                     }}
+                    itemStyle={{ color: "#f4f4f5" }}
+                    labelStyle={{ color: "#a1a1aa" }}
+                    cursor={{ fill: "rgba(124, 58, 237, 0.1)" }}
                   />
                   <Bar dataKey="count" radius={[4, 4, 0, 0]}>
                     {solvedData.map((_, idx) => (
@@ -198,9 +200,11 @@ export default function Analytics() {
                     contentStyle={{
                       backgroundColor: "#16161e",
                       borderColor: "rgba(124, 58, 237, 0.3)",
-                      color: "#f4f4f5",
                       borderRadius: "12px",
+                      boxShadow: "0 8px 32px rgba(124, 58, 237, 0.2)",
                     }}
+                    itemStyle={{ color: "#f4f4f5" }}
+                    labelStyle={{ color: "#a1a1aa" }}
                   />
                 </PieChart>
               </ResponsiveContainer>

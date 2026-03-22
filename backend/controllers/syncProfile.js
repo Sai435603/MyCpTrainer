@@ -116,7 +116,7 @@ async function syncProfile(req, res) {
 
         const cfHandle = user.cfHandle || handle;
         const lcHandle = user.lcHandle;
-        const cfLinked = user.cfLinked !== false;
+        const cfLinked = !!user.cfLinked;
         const lcLinked = !!user.lcLinked && !!lcHandle;
 
         let newlySolved = 0;

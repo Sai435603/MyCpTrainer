@@ -1,0 +1,394 @@
+/* ===== FRIENDS PAGE ===== */
+
+.friends-container {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding: 5rem 4% 3rem 4%;
+  background: var(--bg-primary);
+  min-height: 100vh;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+/* ── Search Section ── */
+.friends-search-section {
+  position: relative;
+}
+
+.friends-search-section h2 {
+  font-size: 1.35rem;
+  font-weight: 800;
+  margin-bottom: 1rem;
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.search-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-icon {
+  position: absolute;
+  left: 14px;
+  color: var(--violet-400);
+  font-size: 1rem;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.friends-search-input {
+  width: 100%;
+  padding: 0.85rem 1rem 0.85rem 2.6rem;
+  font-size: 0.95rem;
+  font-family: 'Inter', sans-serif;
+  color: var(--text-primary);
+  background: var(--bg-card);
+  border: 1px solid var(--border-violet);
+  border-radius: var(--radius-md);
+  outline: none;
+  transition: all var(--transition-default);
+}
+
+.friends-search-input::placeholder {
+  color: var(--text-muted);
+}
+
+.friends-search-input:focus {
+  border-color: var(--violet-500);
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.15), var(--shadow-violet);
+  background: var(--bg-card-hover);
+}
+
+/* ── Search Results Dropdown ── */
+.search-results-dropdown {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-violet);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-violet-lg);
+  z-index: 50;
+  max-height: 340px;
+  overflow-y: auto;
+  animation: dropIn 0.2s ease;
+}
+
+@keyframes dropIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.search-result-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--border-subtle);
+  transition: background var(--transition-fast);
+}
+
+.search-result-item:last-child {
+  border-bottom: none;
+}
+
+.search-result-item:hover {
+  background: rgba(124, 58, 237, 0.08);
+}
+
+.search-result-info {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.search-result-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--gradient-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.search-result-handle {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--text-primary);
+}
+
+.search-result-rating {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.search-no-results {
+  padding: 1.25rem;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  font-style: italic;
+}
+
+.search-loading {
+  padding: 1.25rem;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+/* ── Follow / Unfollow Button ── */
+.follow-btn {
+  padding: 0.4rem 1rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  border: none;
+  flex-shrink: 0;
+}
+
+.follow-btn.follow {
+  background: var(--gradient-primary);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(124, 58, 237, 0.3);
+}
+
+.follow-btn.follow:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(124, 58, 237, 0.4);
+}
+
+.follow-btn.following {
+  background: rgba(124, 58, 237, 0.12);
+  color: var(--violet-300);
+  border: 1px solid var(--border-violet);
+}
+
+.follow-btn.following:hover {
+  background: rgba(239, 68, 68, 0.12);
+  color: #f87171;
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
+.follow-btn:disabled {
+  opacity: 0.5;
+  cursor: wait;
+  transform: none;
+}
+
+/* ── Friends List Section ── */
+.friends-list-section h2 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.friends-count-badge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgba(124, 58, 237, 0.15);
+  color: var(--violet-400);
+}
+
+/* ── Friend Card Grid ── */
+.friends-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1rem;
+}
+
+.friend-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem;
+  transition: all var(--transition-slow);
+  position: relative;
+  overflow: hidden;
+}
+
+.friend-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--gradient-primary);
+  opacity: 0;
+  transition: opacity var(--transition-default);
+}
+
+.friend-card:hover {
+  border-color: var(--border-violet);
+  box-shadow: var(--shadow-violet);
+  transform: translateY(-2px);
+}
+
+.friend-card:hover::before {
+  opacity: 1;
+}
+
+.friend-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.friend-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--gradient-accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 1rem;
+  color: #fff;
+  box-shadow: 0 2px 12px rgba(168, 85, 247, 0.3);
+}
+
+.friend-identity {
+  flex: 1;
+  margin-left: 0.75rem;
+}
+
+.friend-handle {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--text-primary);
+}
+
+.friend-platforms {
+  display: flex;
+  gap: 4px;
+  margin-top: 3px;
+}
+
+.friend-platform-tag {
+  font-size: 0.55rem;
+  font-weight: 800;
+  padding: 1px 5px;
+  border-radius: 999px;
+}
+
+.friend-platform-tag.cf {
+  background: rgba(59, 130, 246, 0.15);
+  color: var(--cf-color);
+}
+
+.friend-platform-tag.lc {
+  background: rgba(245, 158, 11, 0.15);
+  color: var(--lc-color);
+}
+
+.friend-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.friend-stat {
+  background: rgba(124, 58, 237, 0.05);
+  border: 1px solid rgba(124, 58, 237, 0.08);
+  border-radius: var(--radius-sm);
+  padding: 0.6rem 0.75rem;
+  text-align: center;
+}
+
+.friend-stat-label {
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+
+.friend-stat-value {
+  font-size: 1.1rem;
+  font-weight: 800;
+}
+
+.friend-stat-value.rating {
+  color: var(--violet-400);
+}
+
+.friend-stat-value.streak {
+  color: #f59e0b;
+}
+
+/* Rating-based colors */
+.rating-newbie { color: #71717a !important; }
+.rating-pupil { color: #22c55e !important; }
+.rating-specialist { color: #06b6d4 !important; }
+.rating-expert { color: #3b82f6 !important; }
+.rating-cm { color: #a855f7 !important; }
+.rating-master { color: #f59e0b !important; }
+.rating-im { color: #f59e0b !important; }
+.rating-gm { color: #ef4444 !important; }
+.rating-igm { color: #ef4444 !important; }
+.rating-legendary { color: #dc2626 !important; }
+
+/* ── Empty State ── */
+.friends-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 3rem 2rem;
+  text-align: center;
+}
+
+.friends-empty-icon {
+  font-size: 3rem;
+  opacity: 0.6;
+}
+
+.friends-empty h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.friends-empty p {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  max-width: 320px;
+  line-height: 1.6;
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .friends-container {
+    padding: 4.5rem 1rem 2rem 1rem;
+    gap: 1.5rem;
+  }
+
+  .friends-grid {
+    grid-template-columns: 1fr;
+  }
+}

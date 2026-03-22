@@ -135,7 +135,7 @@ export default async function dailyProblems(req, res) {
     if (!user) return res.status(404).json({ error: `User not found: ${handle}` });
 
     const userRating = typeof user.rating === "number" ? user.rating : 800;
-    const cfLinked = user.cfLinked !== false;
+    const cfLinked = !!user.cfLinked;
     const lcLinked = !!user.lcLinked;
     const cfHandle = user.cfHandle || user.handle;
 
@@ -244,16 +244,40 @@ export default async function dailyProblems(req, res) {
 
       // Difficulty mix: 2 Easy + 2 Medium + 1 Hard = 5
       const lcMix = ["Easy", "Easy", "Medium", "Medium", "Hard"];
+      const lcExclude = () => new Set([...visited, ...recentlyUsed]);
 
       for (const diff of lcMix) {
         if (collected.filter(p => p.source === "leetcode").length >= lcTotal) break;
-        const lcs = await queryLCProblems({
-          lcTags: lcWeakTags.length > 0 ? lcWeakTags : undefined,
-          difficulty: diff, excludeIds: new Set([...visited, ...recentlyUsed]),
-          limit: 1,
-        });
+
+        // Try with weak tags first
+        let lcs = lcWeakTags.length > 0
+          ? await queryLCProblems({ lcTags: lcWeakTags, difficulty: diff, excludeIds: lcExclude(), limit: 2 })
+          : [];
+
+        // Fallback: no tag filter
+        if (lcs.length === 0) {
+          lcs = await queryLCProblems({ lcTags: undefined, difficulty: diff, excludeIds: lcExclude(), limit: 2 });
+        }
+
         for (const p of lcs) {
+          if (collected.filter(x => x.source === "leetcode").length >= lcTotal) break;
           if (!visited.has(p.problemId)) { visited.add(p.problemId); collected.push(p); }
+        }
+      }
+
+      // Final fill: if still under 5 LC, grab any difficulty
+      const lcSoFar = collected.filter(p => p.source === "leetcode").length;
+      if (lcSoFar < lcTotal) {
+        for (const diff of ["Easy", "Medium", "Hard"]) {
+          if (collected.filter(p => p.source === "leetcode").length >= lcTotal) break;
+          const fill = await queryLCProblems({
+            lcTags: undefined, difficulty: diff, excludeIds: lcExclude(),
+            limit: lcTotal - collected.filter(p => p.source === "leetcode").length,
+          });
+          for (const p of fill) {
+            if (collected.filter(x => x.source === "leetcode").length >= lcTotal) break;
+            if (!visited.has(p.problemId)) { visited.add(p.problemId); collected.push(p); }
+          }
         }
       }
     }

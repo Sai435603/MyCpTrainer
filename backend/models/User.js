@@ -31,11 +31,14 @@ const UserSchema = new Schema({
   // Profile linking
   cfHandle: { type: String, default: null },
   lcHandle: { type: String, default: null },
-  cfLinked: { type: Boolean, default: true },
+  cfLinked: { type: Boolean, default: false },
   lcLinked: { type: Boolean, default: false },
 
   // Anti-repeat: track recently suggested problem IDs
   recentlySuggested: { type: [String], default: [] },
+
+  // Social: users this person follows (by handle)
+  following: { type: [String], default: [] },
 
 }, { timestamps: true });
 

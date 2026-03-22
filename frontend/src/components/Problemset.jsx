@@ -41,7 +41,7 @@ function problemUrl(p) {
 export default function Problemset() {
   const { problemSet, profileData } = useContext(MainAppContext);
   const [openInfoIdx, setOpenInfoIdx] = useState(null);
-  const [filter, setFilter] = useState("all");
+  const [filter, setFilter] = useState("codeforces");
 
   const cfLinked = profileData?.cfLinked !== false;
   const lcLinked = !!profileData?.lcLinked;
@@ -55,12 +55,11 @@ export default function Problemset() {
   }, [problemSet]);
 
   const filtered = useMemo(() => {
-    if (filter === "all") return problems;
     return problems.filter(p => (p.source || "codeforces") === filter);
   }, [problems, filter]);
 
-  const solvedCount = useMemo(() => problems.filter(p => p.isSolved).length, [problems]);
-  const progressPct = problems.length > 0 ? Math.round((solvedCount / problems.length) * 100) : 0;
+  const solvedCount = useMemo(() => filtered.filter(p => p.isSolved).length, [filtered]);
+  const progressPct = filtered.length > 0 ? Math.round((solvedCount / filtered.length) * 100) : 0;
   const cfCount = problems.filter(p => (p.source || "codeforces") === "codeforces").length;
   const lcCount = problems.filter(p => p.source === "leetcode").length;
 
@@ -75,12 +74,6 @@ export default function Problemset() {
       {/* Toggle Filter */}
       <div className="toggle-row">
         <button
-          className={`toggle-btn ${filter === "all" ? "active" : ""}`}
-          onClick={() => setFilter("all")}
-        >
-          All ({problems.length})
-        </button>
-        <button
           className={`toggle-btn toggle-cf ${filter === "codeforces" ? "active" : ""} ${!cfLinked ? "disabled-tab" : ""}`}
           onClick={() => setFilter("codeforces")}
         >
@@ -94,12 +87,12 @@ export default function Problemset() {
         </button>
       </div>
 
-      {problems.length > 0 && (
+      {filtered.length > 0 && (
         <div className="progress-stats">
           <div className="progress-track">
             <div className="progress-fill" style={{ width: `${progressPct}%` }} />
           </div>
-          <span className="progress-label">{solvedCount}/{problems.length} solved</span>
+          <span className="progress-label">{solvedCount}/{filtered.length} solved</span>
         </div>
       )}
 

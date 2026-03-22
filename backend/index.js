@@ -1,6 +1,7 @@
 import fetchUpcomingcontests from "./modules/fetchUpcomingcontests.js";
 import dailyProblems from "./controllers/dailyProblems.js";
 import fetchRating from "./controllers/fetchRating.js";
+import { fetchLCRating } from "./controllers/fetchRating.js";
 import fetchHeatmap from "./controllers/fetchHeatmap.js";
 import { resetHeatmap } from "./controllers/fetchHeatmap.js";
 import setUpDatabase from "./utils/setUpDatabase.js";
@@ -20,6 +21,7 @@ import getBlogById from "./controllers/getBlogById.js";
 import updateBlog from "./controllers/updateBlog.js";
 import deleteBlog from "./controllers/deleteBlog.js";
 import { getProfile, linkProfile, unlinkProfile } from "./controllers/linkProfile.js";
+import { searchUsers, followUser, unfollowUser, getFriends } from "./controllers/followController.js";
 import solveProblem from "./controllers/solveProblem.js";
 import { FRONTEND_URL } from "./constants.js";
 import cron from "node-cron";
@@ -81,6 +83,7 @@ app.get("/api/problems/:user", authMiddleware, dailyProblems);
 app.post("/api/problems/solve", authMiddleware, solveProblem);
 
 app.get("/api/rating/:user", authMiddleware, fetchRating);
+app.get("/api/lc-rating/:user", authMiddleware, fetchLCRating);
 
 app.get("/api/heatmap/:user", authMiddleware, fetchHeatmap);
 app.post("/api/heatmap/reset", authMiddleware, resetHeatmap);
@@ -104,6 +107,11 @@ app.get("/api/blogs/:id", getBlogById);
 app.put("/api/blogs/:id", updateBlog);    
 
 app.delete("/api/blogs/:id", deleteBlog);
+
+app.get("/api/friends/search", authMiddleware, searchUsers);
+app.post("/api/friends/follow", authMiddleware, followUser);
+app.post("/api/friends/unfollow", authMiddleware, unfollowUser);
+app.get("/api/friends", authMiddleware, getFriends);
 
 app.get("/api/contests", async (req, res) => {
   try {

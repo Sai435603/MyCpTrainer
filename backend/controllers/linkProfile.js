@@ -12,9 +12,9 @@ export async function getProfile(req, res) {
 
     return res.json({
       handle: user.handle,
-      cfHandle: user.cfHandle || user.handle, // fallback to handle
+      cfHandle: user.cfHandle || null,
       lcHandle: user.lcHandle || null,
-      cfLinked: user.cfLinked !== false, // default true
+      cfLinked: !!user.cfLinked,
       lcLinked: !!user.lcLinked,
       rating: user.rating || 800,
       streak: user.streak || 0,

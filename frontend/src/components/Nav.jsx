@@ -42,6 +42,7 @@ export default function Nav() {
           <li><NavLink to="/" end>PROBLEMS</NavLink></li>
           <li><NavLink to="/contests">CONTESTS</NavLink></li>
           <li><NavLink to="/analytics">ANALYTICS</NavLink></li>
+          <li><NavLink to="/friends">FRIENDS</NavLink></li>
           <li><NavLink to="/blogs">BLOGS</NavLink></li>
         </ul>
 
