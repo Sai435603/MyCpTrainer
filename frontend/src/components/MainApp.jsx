@@ -76,12 +76,12 @@ export default function MainApp() {
 
       if (problems) {
         setProblemSet(problems);
-        // Update profile linked status from problems response
+        // Update profile linked status + handles from problems response
         if (typeof problems.cfLinked !== "undefined") {
           setProfileData(prev => ({
             ...prev,
-            cfLinked: problems.cfLinked,
-            lcLinked: problems.lcLinked,
+            cfLinked: !!problems.cfLinked,
+            lcLinked: !!problems.lcLinked,
           }));
         }
       }
@@ -108,7 +108,10 @@ export default function MainApp() {
         headers: authHeaders,
       });
       if (!res.ok) throw new Error("Failed to sync profile.");
-      await fetchAllData(userr, { showLoader: false });
+      await Promise.all([
+        fetchAllData(userr, { showLoader: false }),
+        fetchProfile(),
+      ]);
     } catch (error) {
       console.error("Error during profile sync:", error);
     } finally {

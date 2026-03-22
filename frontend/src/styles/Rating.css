@@ -19,18 +19,122 @@
   box-shadow: var(--shadow-violet);
 }
 
-.rating-chart h2 {
-  margin: 0 0 0.5rem 0;
+/* Header with toggle */
+.rating-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+.rating-header h2 {
+  margin: 0;
   font-size: 1.1rem;
   font-weight: 700;
   color: var(--text-primary);
 }
 
+.rating-toggle {
+  display: flex;
+  gap: 4px;
+  background: var(--bg-secondary);
+  border-radius: var(--radius-sm);
+  padding: 3px;
+  border: 1px solid var(--border-subtle);
+}
+
+.rating-toggle-btn {
+  padding: 0.3rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  font-family: 'Inter', sans-serif;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  background: transparent;
+  color: var(--text-muted);
+  transition: all var(--transition-fast);
+  letter-spacing: 0.02em;
+}
+
+.rating-toggle-btn:hover {
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.rating-toggle-btn.active.cf-active {
+  background: rgba(124, 58, 237, 0.2);
+  color: var(--violet-400);
+  box-shadow: 0 1px 4px rgba(124, 58, 237, 0.15);
+}
+
+.rating-toggle-btn.active.lc-active {
+  background: rgba(245, 158, 11, 0.2);
+  color: #f59e0b;
+  box-shadow: 0 1px 4px rgba(245, 158, 11, 0.15);
+}
+
+/* Tooltip */
+.rating-tooltip {
+  background: #16161e;
+  padding: 12px 16px;
+  border-radius: 12px;
+  color: #ffffff;
+  max-width: 280px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+.rating-tooltip.cf-tooltip {
+  border: 1px solid rgba(124, 58, 237, 0.3);
+}
+
+.rating-tooltip.lc-tooltip {
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.rt-contest {
+  margin-bottom: 6px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: #ffffff;
+}
+
+.rt-rank {
+  font-size: 0.8rem;
+  color: #d4d4d8;
+}
+
+.rt-rating {
+  font-size: 0.85rem;
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.rt-date {
+  font-size: 0.75rem;
+  color: #a1a1aa;
+  margin-top: 6px;
+}
+
+.lc-accent {
+  color: #f59e0b !important;
+}
+
+/* Empty state */
+.rating-empty {
+  color: #a1a1aa;
+  font-style: italic;
+  padding: 2rem;
+  text-align: center;
+}
+
+/* Chart container */
 .rating-container {
   border-radius: var(--radius-md);
   overflow: hidden;
 }
 
+/* Loading spinner */
 .rating-chart .chart-spinner {
   display: flex;
   flex-direction: column;

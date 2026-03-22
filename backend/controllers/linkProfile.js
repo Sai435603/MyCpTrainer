@@ -73,9 +73,9 @@ export async function linkProfile(req, res) {
 
     return res.json({
       message: `${platform} profile linked successfully.`,
-      cfHandle: user.cfHandle || user.handle,
+      cfHandle: user.cfHandle || null,
       lcHandle: user.lcHandle || null,
-      cfLinked: user.cfLinked !== false,
+      cfLinked: !!user.cfLinked,
       lcLinked: !!user.lcLinked,
     });
   } catch (err) {

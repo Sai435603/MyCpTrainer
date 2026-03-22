@@ -43,7 +43,7 @@ export default function Problemset() {
   const [openInfoIdx, setOpenInfoIdx] = useState(null);
   const [filter, setFilter] = useState("codeforces");
 
-  const cfLinked = profileData?.cfLinked !== false;
+  const cfLinked = !!profileData?.cfLinked;
   const lcLinked = !!profileData?.lcLinked;
 
   const problems = useMemo(() => {
