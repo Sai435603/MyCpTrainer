@@ -59,9 +59,13 @@ async function queryCFProblems({ tags, ratingMin, ratingMax, solvedPairs, exclud
 }
 
 // ─── LC Problem Query ───
-async function queryLCProblems({ lcTags, difficulty, excludeIds, limit = 1 }) {
+async function queryLCProblems({ lcTags, difficulty, excludeIds, solvedSlugs, limit = 1 }) {
   const filter = { paidOnly: false, difficulty };
   if (lcTags?.length) filter.topicTags = { $in: lcTags };
+  // Exclude solved problems by titleSlug directly in the DB query
+  if (solvedSlugs?.size > 0) {
+    filter.titleSlug = { $nin: Array.from(solvedSlugs) };
+  }
 
   const total = await LeetcodeProblem.countDocuments(filter);
   if (total === 0) return [];
@@ -161,12 +165,13 @@ export default async function dailyProblems(req, res) {
 
     // ─── CF PROBLEMS ───
     let weakTags = [];
+    let cfSolvedIds = new Set(); // Track all CF solved problem IDs
     if (cfLinked) {
       const cacheKey = `cf_submissions:${cfHandle}`;
       let cfSubs = await cacheGet(cacheKey);
       if (!cfSubs) {
         try {
-          const cfUrl = `https://codeforces.com/api/user.status?handle=${encodeURIComponent(cfHandle)}&from=1&count=1500`;
+          const cfUrl = `https://codeforces.com/api/user.status?handle=${encodeURIComponent(cfHandle)}&from=1&count=5000`;
           const cfResp = await fetch(cfUrl);
           if (cfResp.ok) {
             const cfJson = await cfResp.json();
@@ -185,6 +190,8 @@ export default async function dailyProblems(req, res) {
         const analysis = analyzeSubmissions(cfSubs);
         weakTags = analysis.weakTags;
         solvedPairs = analysis.solvedPairs;
+        // Build a set of solved CF problem IDs for excludeIds
+        cfSolvedIds = new Set(solvedPairs.map(p => `${p.contestId}-${p.index}`));
       }
 
       // Always 10 CF problems: 3 easy + 3 medium + 3 hard + 1 stretch
@@ -202,14 +209,14 @@ export default async function dailyProblems(req, res) {
         let candidates = await queryCFProblems({
           tags: weakTags.length > 0 ? weakTags : [],
           ratingMin: tier.min, ratingMax: tier.max,
-          solvedPairs, excludeIds: new Set([...visited, ...recentlyUsed]),
+          solvedPairs, excludeIds: new Set([...visited, ...recentlyUsed, ...cfSolvedIds]),
           limit: tier.count,
         });
         // Fallback: no tag filter if nothing found
         if (candidates.length === 0) {
           candidates = await queryCFProblems({
             tags: [], ratingMin: tier.min, ratingMax: tier.max,
-            solvedPairs, excludeIds: new Set([...visited, ...recentlyUsed]),
+            solvedPairs, excludeIds: new Set([...visited, ...recentlyUsed, ...cfSolvedIds]),
             limit: tier.count,
           });
         }
@@ -227,7 +234,7 @@ export default async function dailyProblems(req, res) {
         const remaining = cfTotal - collected.length;
         const fill = await queryCFProblems({
           tags: [], ratingMin: 800, ratingMax: Math.min(3500, userRating + 500),
-          solvedPairs, excludeIds: new Set([...visited, ...recentlyUsed]),
+          solvedPairs, excludeIds: new Set([...visited, ...recentlyUsed, ...cfSolvedIds]),
           limit: remaining,
         });
         for (const p of fill) {
@@ -238,9 +245,42 @@ export default async function dailyProblems(req, res) {
     }
 
     // ─── LC PROBLEMS (always 5) ───
+    let lcSolvedSlugs = new Set();
     if (lcLinked) {
       const lcTotal = 5;
+      const lcHandle = user.lcHandle;
       const lcWeakTags = weakTags.map(t => CF_TO_LC_TAGS[t.toLowerCase()]).filter(Boolean);
+
+      // Fetch LC solved slugs to exclude them
+      if (lcHandle) {
+        try {
+          const lcCacheKey = `lc_ac:${lcHandle}`;
+          let solvedSlugs = await cacheGet(lcCacheKey);
+          if (!solvedSlugs) {
+            const query = {
+              query: `query recentAcSubmissions($username: String!, $limit: Int!) {
+                recentAcSubmissionList(username: $username, limit: $limit) {
+                  titleSlug
+                }
+              }`,
+              variables: { username: lcHandle, limit: 200 },
+            };
+            const lcRes = await fetch('https://leetcode.com/graphql', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(query),
+            });
+            if (lcRes.ok) {
+              const json = await lcRes.json();
+              solvedSlugs = (json?.data?.recentAcSubmissionList || []).map(s => s.titleSlug);
+              await cacheSet(lcCacheKey, solvedSlugs, 600);
+            }
+          }
+          if (solvedSlugs) lcSolvedSlugs = new Set(solvedSlugs);
+        } catch (err) {
+          console.warn('LC solved fetch failed:', err.message);
+        }
+      }
 
       // Difficulty mix: 2 Easy + 2 Medium + 1 Hard = 5
       const lcMix = ["Easy", "Easy", "Medium", "Medium", "Hard"];
@@ -251,12 +291,12 @@ export default async function dailyProblems(req, res) {
 
         // Try with weak tags first
         let lcs = lcWeakTags.length > 0
-          ? await queryLCProblems({ lcTags: lcWeakTags, difficulty: diff, excludeIds: lcExclude(), limit: 2 })
+          ? await queryLCProblems({ lcTags: lcWeakTags, difficulty: diff, excludeIds: lcExclude(), solvedSlugs: lcSolvedSlugs, limit: 2 })
           : [];
 
         // Fallback: no tag filter
         if (lcs.length === 0) {
-          lcs = await queryLCProblems({ lcTags: undefined, difficulty: diff, excludeIds: lcExclude(), limit: 2 });
+          lcs = await queryLCProblems({ lcTags: undefined, difficulty: diff, excludeIds: lcExclude(), solvedSlugs: lcSolvedSlugs, limit: 2 });
         }
 
         for (const p of lcs) {
@@ -272,6 +312,7 @@ export default async function dailyProblems(req, res) {
           if (collected.filter(p => p.source === "leetcode").length >= lcTotal) break;
           const fill = await queryLCProblems({
             lcTags: undefined, difficulty: diff, excludeIds: lcExclude(),
+            solvedSlugs: lcSolvedSlugs,
             limit: lcTotal - collected.filter(p => p.source === "leetcode").length,
           });
           for (const p of fill) {
